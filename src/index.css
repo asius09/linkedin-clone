@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --color-primary: #0a66c2;
+  --color-primary-hover: #004182;
+  --color-primary-text: #191919;
+  --color-secondary-text: #666666;
+  --color-primary-bg: #f3f2ef;
+  --color-secondary-bg: #ffffff;
+  --color-input-bg: #eef3f8;
+  --color-input-outline: #0a66c2;
+  --color-border: #e0e0e0;
+  --color-primary-text-dark: #ffffff;
+  --color-secondary-text-dark: #b0b0b0;
+  --color-primary-bg-dark: #1d2226;
+  --color-secondary-bg-dark: #000000;
+  --color-input-bg-dark: #38434f;
+  --color-input-outline-dark: #0a66c2;
+  --color-border-dark: #424242;
+  --font-segoe-ui: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+}
