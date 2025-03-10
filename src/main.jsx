@@ -10,11 +10,14 @@ import {
   createRoutesFromElements,
 } from "react-router";
 import { Landing } from "./components/Landing";
+import { Login, SignUp } from "./components/Auth";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
     </Route>
   )
 );

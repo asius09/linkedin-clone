@@ -1,5 +1,6 @@
 import React from "react";
 import users from "./data";
+import { Link } from "react-router";
 
 const Hero = () => {
   const tags = [
@@ -95,15 +96,20 @@ const Hero = () => {
               Thousands of jobs, industry thought leaders and infinite business
               opportunities.
             </p>
+          <Link to={"/login"}>
             <button className="w-full md:w-1/2 bg-primary hover:bg-primary-hover text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer">
               <span>Sign in</span>
               <i className="ri-arrow-right-line"></i>
             </button>
+          </Link>
             <div className="flex flex-col items-start justify-start mt-4">
               <p className="text-gray-500 text-md">Don't have an account?</p>
-              <a className="text-primary-text dark:text-primary-text-dark font-medium cursor-pointer underline">
+              <Link
+                to="/signup"
+                className="text-primary-text dark:text-primary-text-dark font-medium cursor-pointer underline"
+              >
                 <span>Sign up for free</span>
-              </a>
+              </Link>
             </div>
           </div>
         </section>
