@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Post from "./Post";
+import PostCard from "./PostCard";
 import FeedDropDown from "./FeedDropDown";
 
 const Feed = () => {
@@ -112,8 +112,8 @@ const Feed = () => {
       {/* Posts with improved spacing */}
       <div className="space-y-6">
         {posts.map((post) => (
-          <div key={post.id}>
-            <Post post={post} />
+          <div key={post.author.name}>
+            <PostCard post={post} />
           </div>
         ))}
       </div>

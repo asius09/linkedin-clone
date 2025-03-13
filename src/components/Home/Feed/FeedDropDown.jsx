@@ -11,9 +11,9 @@ const FeedDropDown = ({ options, filter, setFilter }) => {
   ];
 
   return (
-    <div className="relative">
+    <div className="relative w-[20%]">
       <button
-        className="flex items-center space-x-2 text-sm text-secondary-text dark:text-secondary-text-dark hover:bg-gray-100 dark:hover:bg-gray-800 px-4 py-2 rounded-full transition-colors"
+        className="flex items-center space-x-2 text-xs text-secondary-text dark:text-secondary-text-dark hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-2 rounded-full transition-colors"
         onClick={() => setShowDropdown(!showDropdown)}
       >
         <i className="ri-filter-3-line"></i>

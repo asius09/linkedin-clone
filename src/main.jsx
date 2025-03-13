@@ -2,36 +2,41 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "remixicon/fonts/remixicon.css";
-import App from "./App.jsx";
 import {
   Route,
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router";
-import { Landing } from "./components/Landing";
-import { Login, SignUp } from "./components/Auth";
-import HomeLayout from "./HomeLayout";
-import Home from "./components/Home";
-import Network from "./components/MyNetwork";
-import Jobs from "./components/Jobs/Jobs.jsx";
-import Messages from "./components/Messages/Messages.jsx";
-import Notifications from "./components/Notifications/Notifications.jsx";
-import Profile from "./components/Home/Profile/Profile.jsx";
+import { Provider } from "react-redux";
+import store from "./app/store.js";
+import MainLayout from "../src/layouts/MainLayout.jsx";
+import AuthLayout from "./layouts/AuthLayout.jsx";
+import {
+  Home,
+  Network,
+  Jobs,
+  Messages,
+  Notifications,
+  Profile,
+  Login,
+  SignUp,
+  Landing,
+} from "./pages";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
+    <Route path="/" element={<AuthLayout />}>
       <Route index element={<Landing />} />
-      <Route path="login" element={<Login />} />
-      <Route path="signup" element={<SignUp />} />
-      <Route element={<HomeLayout />}>
-        <Route path="home" element={<Home />} />
-        <Route path="my-network" element={<Network />} />
-        <Route path="jobs" element={<Jobs />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="notifications" element={<Notifications />} />
-        <Route path="profile" element={<Profile />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route element={<MainLayout />}>
+        <Route path="/home" element={<Home />} />
+        <Route path="/mynetwork" element={<Network />} />
+        <Route path="/jobs" element={<Jobs />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Route>
   )
@@ -39,6 +44,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>
 );

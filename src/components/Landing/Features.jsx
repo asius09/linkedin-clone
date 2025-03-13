@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const Features = () => {
   const features = [
@@ -100,6 +100,39 @@ const Features = () => {
     },
   ];
 
+  const sliderContent = [
+    {
+      index: 1,
+      title: "Let the right people know you're open to work",
+      description:
+        "With the Open To Work feature, you can privately tell recruiters or publicly share with the LinkedIn community that you are looking for new job opportunities.",
+      imgUrl: "https://static.licdn.com/aero-v1/sc/h/dbvmk0tsk0o0hd59fi64z3own",
+    },
+    {
+      index: 2,
+      title: "Conversations today could lead to opportunity tomorrow",
+      description:
+        "Sending messages to people you know is a great way to strengthen relationships as you take the next step in your career.",
+      imgUrl: "https://static.licdn.com/aero-v1/sc/h/2r8kd5zqpi905lkzsshdlvvn5",
+    },
+    {
+      index: 3,
+      title: "Stay up to date on your industry",
+      description:
+        "From live videos, to stories, to newsletters and more, LinkedIn is full of ways to stay up to date on the latest discussions in your industry.",
+      imgUrl: "https://static.licdn.com/aero-v1/sc/h/ann24vsq7r0ux3vipqa1n90gg",
+    },
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % sliderContent.length);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
   const tagStyle = {
     blue: {
       border: "border-primary",
@@ -113,6 +146,32 @@ const Features = () => {
       bg: "bg-primary-dark/20 dark:bg-primary-dark/10",
       hover: "hover:bg-primary-dark/30 dark:hover:bg-primary-dark/20",
     },
+  };
+
+  const renderSliderContent = ({ title, description, imgUrl, index }) => {
+    return (
+      <div
+        className={`h-full flex flex-col md:flex-row justify-between items-center gap-6 
+         
+        `}
+      >
+        <div className="flex flex-col justify-center w-1/2">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary-text dark:text-primary-text-dark mb-4">
+            {title}
+          </h2>
+          <p className="text-secondary-text dark:text-secondary-text-dark mb-6 max-w-xl">
+            {description}
+          </p>
+        </div>
+        <div className="flex justify-center items-center">
+          <img
+            src={imgUrl}
+            alt={title}
+            className="w-64 md:w-96 h-64 md:h-96 object-contain"
+          />
+        </div>
+      </div>
+    );
   };
 
   const renderTag = (tag, style) => {
@@ -176,23 +235,20 @@ const Features = () => {
           return renderFeature(feature, index + 1);
         }
       })}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4 sm:px-6 lg:px-8 py-16 bg-primary/5">
-        <div className="flex flex-col justify-center">
-          <h2 className="text-3xl font-bold text-primary-text dark:text-primary-text-dark mb-4">
-            Let the right people know you're open to work
-          </h2>
-          <p className="text-secondary-text dark:text-secondary-text-dark mb-6">
-            With the Open To Work feature, you can privately tell recruiters or
-            publicly share with the LinkedIn community that you are looking for
-            new job opportunities.
-          </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-primary/5 relative">
+        <div className="transition-opacity duration-500">
+          {renderSliderContent(sliderContent[currentSlide])}
         </div>
-        <div className="flex justify-center items-center">
-          <img
-            src="https://static.licdn.com/aero-v1/sc/h/dbvmk0tsk0o0hd59fi64z3own"
-            alt="open-to-work"
-            className="w-80 h-80 object-contain"
-          />
+        <div className="flex justify-center mt-8 gap-2">
+          {sliderContent.map((_, index) => (
+            <button
+              key={`slider-dot-${index}`}
+              className={`w-3 h-3 rounded-full cursor-pointer ${
+                currentSlide === index ? "bg-primary" : "bg-gray-300"
+              }`}
+              onClick={() => setCurrentSlide(index)}
+            />
+          ))}
         </div>
       </div>
     </section>
