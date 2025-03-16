@@ -1,5 +1,7 @@
 @import "tailwindcss";
+
 @custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary: #0077b5;
   --color-primary-hover: #005582;
@@ -36,4 +38,20 @@ html.dark select:-webkit-autofill {
   color: var(--color-primary-text-dark) !important;
   background-color: var(--color-input-bg-dark) !important;
   transition: background-color 5000s ease-in-out;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--color-secondary-text) !important;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+html.dark .tiptap p.is-editor-empty:first-child::before {
+  color: var(--color-secondary-text-dark) !important;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

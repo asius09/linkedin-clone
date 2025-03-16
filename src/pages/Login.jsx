@@ -1,26 +1,45 @@
 import React, { useState } from "react";
+import InputField from "../components/InputField";
+import Divider from "../components/Divider";
+import Buttons from "../components/Buttons";
+import RememberMeCheckbox from "../components/RememberMeCheckbox";
+import authService from "../services/authService";
+import { useSelector, useDispatch } from "react-redux";
+import { Navigate, useNavigate } from "react-router";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [rememberMe, setRememberMe] = useState(false);
-
+  const dispatch = useDispatch();
+  const { status } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
     console.log("Login submitted:", formData, "Remember me:", rememberMe);
+    // Dispatch action to handle signin logic here
+    authService
+      .signin(formData.email, formData.password)
+      .then((isLogin) => {
+        console.log("Login response:", isLogin);
+        if (isLogin) dispatch(signin(formData));
+        navigate("/home");
+      })
+      .catch((error) => {
+        dispatch(setError(error.message));
+      });
   };
 
   const handleGoogleSignIn = () => {
-    // Handle Google sign-in logic here
     console.log("Google sign-in initiated");
+    // Dispatch action or logic for Google sign-in
   };
+
+  if (status) return <Navigate to="/home" />;
 
   return (
     <div className="flex min-h-screen bg-primary-bg dark:bg-primary-bg-dark">
@@ -38,112 +57,68 @@ const Login = () => {
           Welcome Back
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-primary-text dark:text-primary-text-dark mb-2"
-            >
-              Email or Phone
-            </label>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-border dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-input-bg dark:bg-input-bg-dark text-primary-text dark:text-primary-text-dark transition-all"
-              placeholder="Enter your email or phone"
-              required
-            />
-          </div>
-          <div>
-            <div className="flex justify-between mb-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-primary-text dark:text-primary-text-dark"
-              >
-                Password
-              </label>
-            </div>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-border dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-input-bg dark:bg-input-bg-dark text-primary-text dark:text-primary-text-dark transition-all"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-                className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-secondary-text dark:text-secondary-text-dark"
-              >
-                Remember me
-              </label>
-            </div>
-            <a
-              href="/forgot-password"
-              className="text-primary hover:text-primary-hover text-sm font-medium transition-colors"
-            >
-              Forgot password?
-            </a>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-4 rounded-full focus:outline-none focus:shadow-outline transition-all duration-300 transform hover:scale-[1.02]"
-          >
-            Sign in
-          </button>
-        </form>
-
-        <div className="my-6 flex items-center justify-center">
-          <div className="border-t border-border dark:border-border-dark w-full"></div>
-          <span className="mx-4 text-sm text-secondary-text dark:text-secondary-text-dark font-medium">
-            or
-          </span>
-          <div className="border-t border-border dark:border-border-dark w-full"></div>
-        </div>
-
-        <button
-          onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center bg-secondary-bg dark:bg-secondary-bg-dark text-primary-text dark:text-primary-text-dark font-bold py-3 px-4 rounded-full border border-border dark:border-border-dark hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:shadow-outline transition-all duration-300 transform hover:scale-[1.02]"
-        >
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            alt="Google logo"
-            className="w-5 h-5 mr-3"
+          <InputField
+            label="Email or Phone"
+            type="text"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email or phone"
+            required
           />
-          Sign in with Google
-        </button>
+          <InputField
+            label="Password"
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            required
+          />
+          <RememberMeCheckbox
+            checked={rememberMe}
+            onChange={() => setRememberMe((prev) => !prev)}
+          />
+          <Buttons variant="filled" className="font-semibold" type="submit">
+            Sign in
+          </Buttons>
+        </form>
+        <Divider />
 
-        <div className="mt-8 text-center">
-          <span className="text-secondary-text dark:text-secondary-text-dark">
-            New to LinkedIn?
-          </span>{" "}
-          <a
-            href="/signup"
-            className="text-primary hover:text-primary-hover font-medium hover:underline transition-colors ml-1"
-          >
-            Join now
-          </a>
-        </div>
+        {/* Google Login Button */}
+        <Buttons
+          variant="transparent"
+          icon={
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google logo"
+              className="w-5 h-5 mr-3"
+            />
+          }
+          onClick={handleGoogleSignIn}
+        >
+          Sign in with Google
+        </Buttons>
+        <JoinNowLink />
       </div>
     </div>
   );
 };
+
+const JoinNowLink = () => (
+  <div className="mt-8 text-center">
+    <span className="text-secondary-text dark:text-secondary-text-dark">
+      New to LinkedIn?
+    </span>{" "}
+    <a
+      href="/signup"
+      className="text-primary hover:text-primary-hover font-medium hover:underline transition-colors ml-1"
+    >
+      Join now
+    </a>
+  </div>
+);
 
 export default Login;

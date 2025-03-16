@@ -56,7 +56,7 @@ const Navbar = () => {
     <nav className="w-full sticky top-0 z-50 bg-secondary-bg dark:bg-secondary-bg-dark border-b border-border dark:border-border-dark">
       <div className="w-full mx-auto max-w-7xl flex items-center justify-between">
         <div className="flex items-center w-96">
-          <Link to="/" className="flex items-center">
+          <Link to="/home" className="flex items-center">
             <img src="/logo.svg" alt="Logo" className="w-16 h-16" />
           </Link>
           <Search placeholder="Search" />

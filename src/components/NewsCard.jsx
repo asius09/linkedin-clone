@@ -1,9 +1,4 @@
-import React from "react";
-import SidebarFooter from "./SidebarFooter";
-import PeopleYouKnow from "../PeopleYouKnow.jsx";
-import Notifications from "../Notifications.jsx";
-
-const HomeRightSidebar = () => {
+const NewsCard = () => {
   const industryNews = [
     {
       title: "Tech industry sees 12% growth in Q2 2023",
@@ -21,8 +16,6 @@ const HomeRightSidebar = () => {
 
   return (
     <div className="space-y-4">
-      <Notifications />
-      <PeopleYouKnow />
       <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold">Industry News</h3>
@@ -45,9 +38,8 @@ const HomeRightSidebar = () => {
           ))}
         </div>
       </div>
-      <SidebarFooter />
     </div>
   );
 };
 
-export default HomeRightSidebar;
+export default NewsCard;

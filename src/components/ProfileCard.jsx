@@ -3,6 +3,8 @@ import { Link } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsProfileCardOpen } from "../features/navigationSlice";
 import { toggleThemeCard } from "../features/themeSlice";
+import { signin, signout, setLoading, setError } from "../features/authSlice";
+import authService from "../services/authService";
 
 const ProfileCard = () => {
   const profileCardRef = useRef(null);
@@ -15,6 +17,12 @@ const ProfileCard = () => {
 
   const handleToggleThemeCard = () => {
     dispatch(toggleThemeCard());
+    handleClose();
+  };
+
+  const handleSignOut = () => {
+    dispatch(signout());
+    authService.signout();
     handleClose();
   };
 
@@ -129,7 +137,7 @@ const ProfileCard = () => {
         <div className="border-t border-border dark:border-border-dark mt-3 pt-3">
           <Link
             to="/login"
-            onClick={handleClose}
+            onClick={handleSignOut}
             className="w-full text-left text-sm text-secondary-text dark:text-secondary-text-dark hover:text-scarlet-500"
           >
             Sign Out

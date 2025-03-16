@@ -8,6 +8,8 @@ import {
 import SidebarProfile from "../components/SidebarProfile";
 import PeopleYouKnow from "../components/PeopleYouKnow";
 import Notifications from "../components/Notifications";
+import NewsCard from "../components/NewsCard";
+
 const Home = () => {
   return (
     <div className="container mx-auto bg-primary-bg dark:bg-primary-bg-dark text-primary-text dark:text-primary-text-dark">
@@ -22,6 +24,7 @@ const Home = () => {
         </main>
         <aside className="hidden lg:block space-y-4">
           <Notifications />
+          <NewsCard />
           <PeopleYouKnow />
           <SidebarFooter />
         </aside>

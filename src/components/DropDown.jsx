@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const DropDown = ({ options, selectedOption, onSelect }) => {
+const DropDown = ({
+  options,
+  selectedOption,
+  onSelect,
+  btnTextColor = "text-secondary-text dark:text-secondary-text-dark",
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -23,7 +28,7 @@ const DropDown = ({ options, selectedOption, onSelect }) => {
     <div className="relative w-full min-w-auto max-w-full" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full text-sm font-medium text-gray-700 dark:text-gray-300"
+        className={`flex items-center justify-between w-full text-sm font-medium ${btnTextColor}`}
       >
         {selectedOption ? selectedOption : "Select an option"}
         <i className="ri-arrow-down-s-line ml-2" />

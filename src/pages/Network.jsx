@@ -4,7 +4,7 @@ import {
   PeopleYouKnow,
   NetworkLeftSidebar,
 } from "../components/network";
-import HomeRightSidebar from "../components/Home/HomeRightSidebar";
+import HomeRightSidebar from "../components/NewsCard";
 const Network = () => {
   return (
     <main className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-5">

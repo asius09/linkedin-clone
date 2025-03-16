@@ -7,6 +7,7 @@ import Profile from "./Profile";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import Landing from "./Landing";
+import ArticleWriter from "./ArticleWriter";
 export {
   Home,
   Network,
@@ -17,4 +18,5 @@ export {
   Login,
   SignUp,
   Landing,
+  ArticleWriter,
 };

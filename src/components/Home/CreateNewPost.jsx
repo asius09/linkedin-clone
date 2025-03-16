@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import { openNewPostCard } from "../../features/postSlice";
+import { Link } from "react-router";
 
 const CreateNewPost = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const CreateNewPost = () => {
       title: "Article",
       icon: "ri-article-line",
       iconColor: "text-red-500",
+      link: "/article/new",
       type: "text",
     },
   ];
@@ -44,7 +46,7 @@ const CreateNewPost = () => {
     // Handle file upload logic here
   };
 
-  const renderBtn = ({ title, icon, iconColor, type }) => {
+  const renderBtn = ({ title, icon, iconColor, type, link }) => {
     if (type === "file") {
       return (
         <label
@@ -62,14 +64,17 @@ const CreateNewPost = () => {
       );
     }
     return (
-      <button
+      <Link
+        to={link}
         key={title}
-        onClick={() => handleBtnClick(type)}
-        className="w-full h-full flex items-center justify-center py-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors cursor-pointer"
+        // onClick={() => handleBtnClick(type)}
+        className="w-full h-full flex items-center justify-center py-3
+        hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors
+        cursor-pointer"
       >
         <i className={`${icon} ${iconColor} mr-2`}></i>
         <span>{title}</span>
-      </button>
+      </Link>
     );
   };
 
