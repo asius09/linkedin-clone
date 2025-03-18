@@ -127,5 +127,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 ## TODO
-1. Add authentication -> 
-Authentication Structure 
+1. Add authentication -> donel
+2. working on Create new post 

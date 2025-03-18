@@ -11,7 +11,7 @@ const FeedDropDown = ({ options, filter, setFilter }) => {
   ];
 
   return (
-    <div className="relative w-[20%]">
+    <div className="relative flex-1 text-nowrap flex-nowrap">
       <button
         className="flex items-center space-x-2 text-xs text-secondary-text dark:text-secondary-text-dark hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-2 rounded-full transition-colors"
         onClick={() => setShowDropdown(!showDropdown)}

@@ -11,7 +11,9 @@ import Alert from "../components/Alerts";
 const MainLayout = () => {
   const dispatch = useDispatch();
   const { theme, isThemeCardOpen } = useSelector((state) => state.theme);
-  const { isNewPostCardOpen } = useSelector((state) => state.post);
+  const { isNewPostCardOpen, isPostCreated } = useSelector(
+    (state) => state.post
+  );
   const { status, isLogin } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -30,6 +32,9 @@ const MainLayout = () => {
     <div className="bg-primary-bg dark:bg-primary-bg-dark min-h-screen">
       <header>
         {isLogin.state && <Alert type="success">{isLogin.message}</Alert>}
+        {isPostCreated.state && (
+          <Alert type={isPostCreated.type}>{isPostCreated.message}</Alert>
+        )}
         <Navbar />
         <ProfileCard />
         <LanguageAndTheme />

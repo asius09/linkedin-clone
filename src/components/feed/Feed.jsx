@@ -100,7 +100,7 @@ const Feed = () => {
   return (
     <div className="space-y-4">
       {/* Enhanced Filter bar */}
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between gap-1">
         <span className="w-full border-b-2 border-border dark:border-border-dark"></span>
         <FeedDropDown
           options={dropdownOptions}

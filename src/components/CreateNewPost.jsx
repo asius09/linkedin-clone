@@ -1,9 +1,10 @@
 import { useDispatch } from "react-redux";
-import { openNewPostCard } from "../../features/postSlice";
-import { Link } from "react-router";
+import { openNewPostCard } from "../features/postSlice";
+import { Link, useNavigate } from "react-router";
 
 const CreateNewPost = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const btns = [
     {
       title: "Photo",
@@ -38,6 +39,7 @@ const CreateNewPost = () => {
       // You may want to implement file selection logic here
     }
     dispatch(openNewPostCard());
+    navigate("/home/post/new"); // Navigate to the New Post Card
   };
 
   const handleMediaUpload = (event) => {
@@ -67,7 +69,6 @@ const CreateNewPost = () => {
       <Link
         to={link}
         key={title}
-        // onClick={() => handleBtnClick(type)}
         className="w-full h-full flex items-center justify-center py-3
         hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors
         cursor-pointer"
@@ -86,13 +87,17 @@ const CreateNewPost = () => {
           alt="Profile"
           className="w-12 h-12 rounded-full object-cover"
         />
-        <form onClick={() => dispatch(openNewPostCard())} className="w-full">
-          <textarea
+        <button
+          onClick={() => handleBtnClick("text")}
+          className="w-full"
+        >
+          <input
+            type="text"
             placeholder="What do you want to talk about?"
             className="w-full border border-border dark:border-border-dark rounded-full py-3 px-4 bg-input-bg dark:bg-input-bg-dark resize-none focus:outline-none focus:ring-1 focus:ring-input-outline dark:focus:ring-input-outline-dark"
             rows="1"
           />
-        </form>
+        </button>
       </div>
 
       <div className="flex justify-between items-center pt-1 border-t border-border dark:border-border-dark">

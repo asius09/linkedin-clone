@@ -18,6 +18,8 @@ import {
   ArticleWriter,
 } from "../pages";
 
+import { NewPostCard } from "../components";
+
 const AppRoutes = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<AuthLayout />}>
@@ -25,7 +27,9 @@ const AppRoutes = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route element={<MainLayout />}>
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<Home />}>
+          <Route path="post/new" element={<NewPostCard />} />
+        </Route>
         <Route path="/mynetwork" element={<Network />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/messages" element={<Messages />} />

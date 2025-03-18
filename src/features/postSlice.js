@@ -5,6 +5,11 @@ const initialState = {
   loading: false,
   error: null,
   isNewPostCardOpen: false,
+  isPostCreated: {
+    state: null,
+    message: null,
+    type: null,
+  },
 };
 
 const postSlice = createSlice({
@@ -20,8 +25,11 @@ const postSlice = createSlice({
     closeNewPostCard: (state) => {
       state.isNewPostCardOpen = false;
     },
+    setIsPostCreated: (state, action) => {
+      state.isPostCreated = action.payload;
+    },
   },
 });
 
-export const { addPost, openNewPostCard, closeNewPostCard } = postSlice.actions;
+export const { addPost, openNewPostCard, closeNewPostCard, setIsPostCreated } = postSlice.actions;
 export default postSlice;
