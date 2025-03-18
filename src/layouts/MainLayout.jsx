@@ -4,15 +4,15 @@ import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import LanguageAndTheme from "../components/LanguageAndTheme";
-import authService from "../services/authService";
-import { signin, signout, setLoading, setError } from "../features/authSlice";
+// import authService from "../services/authService";
+// import { signin, signout, setLoading, setError } from "../features/authSlice";
 import Alert from "../components/Alerts";
 
 const MainLayout = () => {
   const dispatch = useDispatch();
   const { theme, isThemeCardOpen } = useSelector((state) => state.theme);
   const { isNewPostCardOpen } = useSelector((state) => state.post);
-  const { status } = useSelector((state) => state.auth);
+  const { status, isLogin } = useSelector((state) => state.auth);
 
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -29,7 +29,7 @@ const MainLayout = () => {
   return (
     <div className="bg-primary-bg dark:bg-primary-bg-dark min-h-screen">
       <header>
-        <Alert type="error">Login Issue</Alert>
+        {isLogin.state && <Alert type="success">{isLogin.message}</Alert>}
         <Navbar />
         <ProfileCard />
         <LanguageAndTheme />

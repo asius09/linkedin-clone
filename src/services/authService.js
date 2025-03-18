@@ -22,8 +22,7 @@ export class AuthService {
       );
       if (!user) throw new Error("Failed to create account, user: " + user);
       return this.signin(email, password);
-    } catch (error) {
-      console.error("Error creating account:", error.message);
+    } catch {
       throw new Error("Failed to create account. Please try again.");
     }
   }
@@ -32,17 +31,16 @@ export class AuthService {
     try {
       await this.account.createEmailPasswordSession(email, password);
       return true;
-    } catch (error) {
-      console.error("Error signing in:", error.message);
+    } catch {
       throw new Error("Failed to sign in. Please try again.");
     }
   }
 
   async getCurrentUser() {
     try {
-      return await this.account.get();
-    } catch (error) {
-      console.error("Error getting current user:", error.message);
+      const user = await this.account.get();
+      return user;
+    } catch {
       throw new Error("Failed to get current user. Please try again.");
     }
   }
@@ -51,8 +49,7 @@ export class AuthService {
     try {
       await this.account.deleteSessions();
       return true;
-    } catch (error) {
-      console.error("Error signing out:", error.message);
+    } catch {
       throw new Error("Failed to sign out. Please try again.");
     }
   }

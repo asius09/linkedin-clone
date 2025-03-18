@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import InputField from "../components/InputField";
 import Divider from "../components/Divider";
 import Buttons from "../components/Buttons";
@@ -6,32 +6,37 @@ import RememberMeCheckbox from "../components/RememberMeCheckbox";
 import authService from "../services/authService";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router";
+import { signin, setIsLogin } from "../features/authSlice";
+import JoinNowLink from "../components/JoinNowLink";
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const { status } = useSelector((state) => state.auth);
+  const { status, isLogin } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
 
-  const handleSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login submitted:", formData, "Remember me:", rememberMe);
-    // Dispatch action to handle signin logic here
-    authService
-      .signin(formData.email, formData.password)
-      .then((isLogin) => {
-        console.log("Login response:", isLogin);
-        if (isLogin) dispatch(signin(formData));
+    setLoading(true);
+    try {
+      const isLogin = await authService.signin(email, password);
+      if (isLogin) {
+        setIsLoginSuccess(true);
+        dispatch(setIsLogin({ state: true, message: "Login successful" }));
+        const user = await authService.getCurrentUser();
+        dispatch(signin(user));
         navigate("/home");
-      })
-      .catch((error) => {
-        dispatch(setError(error.message));
-      });
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -56,40 +61,53 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center text-primary-text dark:text-primary-text-dark mb-6">
           Welcome Back
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {error && <p className="text-red-600 w-full text-center">{error}</p>}
+        {isLoginSuccess && !error && (
+          <p className="text-green-600 w-full text-center">Login successful</p>
+        )}
+
+        {/* Login Form */}
+        <form onSubmit={onSubmit} className="space-y-6">
           <InputField
             label="Email or Phone"
             type="text"
             id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email or phone"
-            required
           />
           <InputField
             label="Password"
             type="password"
             id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
-            required
           />
           <RememberMeCheckbox
             checked={rememberMe}
             onChange={() => setRememberMe((prev) => !prev)}
           />
-          <Buttons variant="filled" className="font-semibold" type="submit">
-            Sign in
+          <Buttons
+            variant="filled"
+            className="font-semibold"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? (
+              <i className="ri-loader-2-line animate-spin w-5 h-5"></i>
+            ) : (
+              "Sign in"
+            )}
           </Buttons>
         </form>
+
         <Divider />
 
         {/* Google Login Button */}
         <Buttons
           variant="transparent"
+          disabled={loading}
           icon={
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -101,24 +119,14 @@ const Login = () => {
         >
           Sign in with Google
         </Buttons>
-        <JoinNowLink />
+        <JoinNowLink
+          title="New to LinkedIn?"
+          navigate="/signup"
+          actionText="Join now"
+        />
       </div>
     </div>
   );
 };
-
-const JoinNowLink = () => (
-  <div className="mt-8 text-center">
-    <span className="text-secondary-text dark:text-secondary-text-dark">
-      New to LinkedIn?
-    </span>{" "}
-    <a
-      href="/signup"
-      className="text-primary hover:text-primary-hover font-medium hover:underline transition-colors ml-1"
-    >
-      Join now
-    </a>
-  </div>
-);
 
 export default Login;

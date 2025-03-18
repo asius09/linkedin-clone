@@ -1,41 +1,42 @@
 import { Outlet } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import authService from "../services/authService";
-import { signin, signout, setLoading, setError } from "../features/authSlice";
+import { signin, signout } from "../features/authSlice";
 import { useNavigate } from "react-router";
 
-function AuthLayout() {
+const AuthLayout = () => {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.auth);
-  const navigate = useNavigate(); // Corrected variable name to follow camelCase
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkSession = async () => {
-      dispatch(setLoading(true));
+      setLoading(true);
       try {
         const user = await authService.getCurrentUser();
         if (user) {
-          dispatch(signin(user));
-          navigate("/home"); // Corrected variable name to follow camelCase
+          dispatch(signin({ ...user }));
+          navigate("/home");
         }
       } catch (error) {
-        console.error("Error getting current user:", error.message);
+        // console.error("Error getting current user:", error.message);
         dispatch(signout());
-        dispatch(setError(error.message));
       } finally {
-        dispatch(setLoading(false));
+        setLoading(false);
       }
     };
 
     checkSession();
-  }, [dispatch]);
+  }, [dispatch, navigate]);
 
   return (
     <div className="app-container w-screen">
       <Outlet />
     </div>
   );
-}
+};
 
 export default AuthLayout;

@@ -4,8 +4,9 @@ const Buttons = ({
   variant = "hollow",
   icon,
   children,
-  type = "button",
+  type = "submit",
   className = "",
+  disabled = false,
 }) => {
   const baseStyles =
     "w-full flex items-center justify-center px-4 py-3 rounded-full transition-all duration-300 transform cursor-pointer";
@@ -17,7 +18,12 @@ const Buttons = ({
   };
 
   return (
-    <button type={type} className={`${styles[variant]} ${className}`}>
+    <button
+      type={type}
+      className={`${styles[variant]} ${className}`}
+      disabled={disabled}
+      aria-disabled={disabled}
+    >
       {icon && <span className="mr-2">{icon}</span>}
       {children}
     </button>

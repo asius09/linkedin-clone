@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsProfileCardOpen } from "../features/navigationSlice";
 import { toggleThemeCard } from "../features/themeSlice";
-import { signin, signout, setLoading, setError } from "../features/authSlice";
+import { signout } from "../features/authSlice";
 import authService from "../services/authService";
 
 const ProfileCard = () => {

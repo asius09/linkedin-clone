@@ -5,11 +5,14 @@ import Buttons from "../components/Buttons";
 import InputField from "../components/InputField";
 import authService from "../services/authService";
 import { useDispatch, useSelector } from "react-redux";
-import { signin, signout, setLoading, setError } from "../features/authSlice";
+import { signin } from "../features/authSlice";
+import JoinNowLink from "../components/JoinNowLink";
 
 const SignUp = () => {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -151,6 +154,11 @@ const SignUp = () => {
         >
           Sign up with Google
         </Buttons>
+        <JoinNowLink
+          title="Already have an account?"
+          navigate="/login"
+          actionText="Log in"
+        />
       </div>
     </div>
   );
