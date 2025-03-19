@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const navItems = [
     { icon: "ri-home", text: "Home", link: "/home" },
-    { icon: "ri-group", text: "My Network", link: "/mynetwork" },
+    { icon: "ri-group", text: "Network", link: "/mynetwork" },
     { icon: "ri-briefcase", text: "Jobs", link: "/jobs" },
     { icon: "ri-message-2", text: "Messages", link: "/messages" },
     {
@@ -34,7 +34,7 @@ const Navbar = () => {
     <NavLink
       to={item.link}
       className={({ isActive }) =>
-        `relative flex items-center gap-x-1 hover:text-primary transition-colors duration-200 py-3 ${
+        `relative flex flex-col items-center gap-x-1 hover:text-primary transition-colors duration-200 py-3 md:w-16 ${
           isActive
             ? "text-primary border-primary border-b-2"
             : "text-primary-text dark:text-primary-text-dark"
@@ -44,9 +44,9 @@ const Navbar = () => {
       {({ isActive }) => (
         <>
           <i
-            className={`text-lg ${item.icon}-${isActive ? "fill" : "line"}`}
+            className={`text-2xl ${item.icon}-${isActive ? "fill" : "line"}`}
           ></i>
-          <span className="text-md font-light">{item.text}</span>
+          <span className="text-xs font-light">{item.text}</span>
         </>
       )}
     </NavLink>
@@ -54,35 +54,38 @@ const Navbar = () => {
 
   return (
     <nav className="w-full sticky top-0 z-50 bg-secondary-bg dark:bg-secondary-bg-dark border-b border-border dark:border-border-dark">
-      <div className="w-full mx-auto max-w-7xl flex items-center justify-between">
-        <div className="flex items-center w-96">
+      <div className="container mx-auto max-w-6xl flex items-center justify-between">
+        <div className="flex items-center md:w-96 lg:w-auto">
           <Link to="/home" className="flex items-center">
             <img src="/logo.svg" alt="Logo" className="w-16 h-16" />
           </Link>
-          <Search placeholder="Search" />
+          <Search
+            placeholder="Search"
+            className="hidden md:block md:w-96 lg:w-1/2"
+          />
         </div>
 
-        <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-8 md:space-x-4 lg:space-x-8">
           {navItems.map((item, index) => (
             <NavLinkItem key={index} item={item} />
           ))}
 
-          <span className="w-px h-6 bg-border dark:bg-border-dark" />
+          <span className="w-px h-6 bg-border dark:bg-border-dark hidden md:block" />
 
-          <div className="relative">
+          <div className="relative flex items-center justify-center">
             <button
               onClick={handleProfileCardToggle}
-              className="flex items-center space-x-2 text-primary-text dark:text-primary-text-dark hover:text-primary focus:outline-none cursor-pointer"
+              className="flex flex-col justify-center items-center text-primary-text dark:text-primary-text-dark hover:text-primary focus:outline-none cursor-pointer"
               aria-expanded={isProfileCardOpen}
               aria-haspopup="true"
             >
               <img
                 src={user.profileImage}
                 alt="Profile"
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-8 h-8 rounded-full object-cover"
               />
-              <div className="flex items-center">
-                <span className="text-sm mr-2">{user.name}</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-xs">Me</span>
                 <i
                   className={`ri-arrow-down-s-line transition-transform duration-200 ${
                     isProfileCardOpen ? "rotate-180" : ""

@@ -1,12 +1,12 @@
-import { Outlet, Navigate } from "react-router";
+import { Navigate, useLocation, Outlet } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import LanguageAndTheme from "../components/LanguageAndTheme";
-// import authService from "../services/authService";
-// import { signin, signout, setLoading, setError } from "../features/authSlice";
 import Alert from "../components/Alerts";
+import authService from "../services/authService";
+import { signin, signout } from "../features/authSlice";
 
 const MainLayout = () => {
   const dispatch = useDispatch();
@@ -15,6 +15,7 @@ const MainLayout = () => {
     (state) => state.post
   );
   const { status, isLogin } = useSelector((state) => state.auth);
+  const location = useLocation();
 
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -26,11 +27,26 @@ const MainLayout = () => {
       isThemeCardOpen || isNewPostCardOpen ? "hidden" : "auto";
   }, [isThemeCardOpen, isNewPostCardOpen]);
 
-  if (!status) return <Navigate to="/login" />;
+  useEffect(() => {
+    const checkSession = async () => {
+      const user = await authService.getCurrentUser();
+      if (user) {
+        dispatch(signin({ ...user }));
+      } else {
+        dispatch(signout());
+      }
+    };
+
+    checkSession();
+  }, [dispatch]);
+
+  if (!status && location.pathname !== "/login") {
+    return <Navigate to="/login" />;
+  }
 
   return (
-    <div className="bg-primary-bg dark:bg-primary-bg-dark min-h-screen">
-      <header>
+    <div className="bg-primary-bg dark:bg-primary-bg-dark min-h-screen flex flex-col">
+      <header className="flex items-center justify-between">
         {isLogin.state && <Alert type="success">{isLogin.message}</Alert>}
         {isPostCreated.state && (
           <Alert type={isPostCreated.type}>{isPostCreated.message}</Alert>
@@ -39,7 +55,7 @@ const MainLayout = () => {
         <ProfileCard />
         <LanguageAndTheme />
       </header>
-      <main className="container max-w-7xl mx-auto pt-5">
+      <main className="container max-w-6xl mx-auto py-5">
         <Outlet />
       </main>
     </div>

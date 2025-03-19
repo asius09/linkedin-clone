@@ -14,7 +14,7 @@ const Home = () => {
   return (
     <div className="container mx-auto bg-primary-bg dark:bg-primary-bg-dark text-primary-text dark:text-primary-text-dark">
       <Outlet />
-      <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr_350px] gap-5">
+      <div className="grid grid-cols-1 px-5 md:grid-cols-[250px_1fr] md:px-0 lg:grid-cols-[250px_1fr_300px] xl:grid-cols-[250px_1fr_350px] gap-5">
         <aside className="hidden md:block">
           <SidebarProfile />
         </aside>

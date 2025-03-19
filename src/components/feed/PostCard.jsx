@@ -1,9 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import DefaultUserAvatar from "../DefaultUserAvatar";
+import { useSelector } from "react-redux";
+import { current } from "@reduxjs/toolkit";
+
+const formate = {
+  $collectionId: "67d43e81000f42b4c9e2",
+  $createdAt: "2025-03-19T15:05:46.062+00:00",
+  $databaseId: "67d43e3a000740115088",
+  $id: "67dadd49002a98add6c6",
+  $permissions: [
+    "read(user:67d67a0d002ad146962b)",
+    "update(user:67d67a0d002ad146962b)",
+    "delete(user:67d67a0d002ad146962b)",
+  ],
+  $updatedAt: "2025-03-19T15:05:46.062+00:00",
+  content: "new ",
+  status: true,
+  title: "",
+  type: "post",
+  user: "",
+  userFile: null,
+  visibility: "Anyone",
+};
 
 const PostCard = ({ post }) => {
+  const { theme } = useSelector((state) => state.theme);
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(post.likes || 0);
+  const [likes, setLikes] = useState(Math.floor(Math.random() * 100));
   const [showComments, setShowComments] = useState(false);
+  const [shares, setShares] = useState(Math.floor(Math.random() * 100));
+  const [postData, setPostData] = useState({});
+
+  useEffect(() => {
+    setPostData({
+      ...post,
+      user: JSON.parse(post.user),
+    });
+  }, [post]);
 
   const handleLike = () => {
     if (liked) {
@@ -12,6 +45,10 @@ const PostCard = ({ post }) => {
       setLikes(likes + 1);
     }
     setLiked(!liked);
+  };
+
+  const handleShowComments = () => {
+    setShowComments(!showComments);
   };
 
   const actionsButtons = [
@@ -28,7 +65,7 @@ const PostCard = ({ post }) => {
     {
       title: "Share",
       icon: "ri-share-line",
-      onClick: () => {},
+      onClick: () => setShares(shares + 1),
     },
     {
       title: "Repost",
@@ -37,27 +74,36 @@ const PostCard = ({ post }) => {
     },
   ];
 
+  const fomateCreatedAt = (createdAt) => {
+    const currDate = new Date();
+    const date = new Date(createdAt);
+    if (currDate.getDate() - date.getDate() === 1) {
+      return "Yesterday";
+    } else if (currDate.getDate() - date.getDate() <= 0) {
+      return "Today";
+    } else {
+      return currDate.getDate() - date.getDate() + " days ago";
+    }
+  };
+
   return (
     <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm mt-4 px-4 pt-4 overflow-hidden">
       {/* Post header */}
       <div className="flex items-center justify-start">
-        <img
-          src={
-            post.author.profileImage ||
-            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          }
-          alt={post.author.name}
-          className="w-16 h-16 rounded-full object-cover mr-3"
+        <DefaultUserAvatar
+          height="h-10"
+          width="w-10"
+          variant={theme}
+          className="mr-3"
         />
+        
+        {/* User Data */}
         <div className="flex flex-col">
           <h3 className="text-lg font-semibold text-primary-text dark:text-primary-text-dark">
-            {post.author.name}
+            {postData.user?.name}
           </h3>
-          <p className="text-xm text-secondary-text dark:text-secondary-text-dark">
-            {post.author.title}
-          </p>
           <p className="text-xs text-secondary-text dark:text-secondary-text-dark">
-            {post.timestamp}
+            {fomateCreatedAt(postData.$createdAt)}
           </p>
         </div>
       </div>
@@ -65,11 +111,11 @@ const PostCard = ({ post }) => {
       {/* Post content */}
       <div className="mt-4">
         <p className="text-primary-text dark:text-primary-text-dark mb-3">
-          {post.content}
+          {postData.content}
         </p>
-        {post?.image && (
+        {postData?.userFile && (
           <img
-            src={post.image}
+            src={postData.userFile}
             alt="Post"
             className="w-full h-auto object-cover mb-3"
           />
@@ -79,18 +125,13 @@ const PostCard = ({ post }) => {
       {/* Post stats */}
       <div className=" flex justify-end items-center py-2 text-secondary-text dark:text-secondary-text-dark text-sm">
         <span className="flex items-center mr-4">
-          <i
-            className={`${
-              liked ? "ri-thumb-up-fill text-blue-500" : "ri-thumb-up-line"
-            } mr-1`}
-          ></i>{" "}
-          {likes}
+          <i className="ri-thumb-up-line mr-1"></i> 234
         </span>
         <span className="flex items-center mr-4">
-          <i className="ri-chat-1-line mr-1"></i> {post.comments?.length || 0}
+          <i className="ri-chat-1-line mr-1"></i> 234
         </span>
         <span className="flex items-center">
-          <i className="ri-share-line mr-1"></i> {post.shares || 0}
+          <i className="ri-share-line mr-1"></i> 234
         </span>
       </div>
 
@@ -112,22 +153,15 @@ const PostCard = ({ post }) => {
         ))}
       </div>
 
+      {/* Post comments */}
       {showComments && (
         <div className="px-4 py-3 border-t border-border dark:border-border-dark">
-          {post.comments && post.comments.length > 0 ? (
-            post.comments.map((comment) => (
-              <div key={comment.id} className="mb-3 last:mb-0">
-                <div className="flex items-start">
-                  <div className="font-medium mr-2">{comment.author}:</div>
-                  <div>{comment.content}</div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-secondary-text dark:text-secondary-text-dark text-sm">
-              No comments yet
-            </p>
-          )}
+          <div className="mb-3 last:mb-0">
+            <div className="flex items-start">
+              <div className="font-medium mr-2">John</div>
+              <div>John Doe</div>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -1,19 +1,53 @@
 import React, { useState, useEffect } from "react";
 import PostCard from "./PostCard";
 import FeedDropDown from "./FeedDropDown";
+import contentService from "../../services/contentService";
+
+const formate = {
+  $collectionId: "67d43e81000f42b4c9e2",
+  $createdAt: "2025-03-19T15:05:46.062+00:00",
+  $databaseId: "67d43e3a000740115088",
+  $id: "67dadd49002a98add6c6",
+  $permissions: [
+    "read(user:67d67a0d002ad146962b)",
+    "update(user:67d67a0d002ad146962b)",
+    "delete(user:67d67a0d002ad146962b)",
+  ],
+  $updatedAt: "2025-03-19T15:05:46.062+00:00",
+  content: "new ",
+  status: true,
+  title: "",
+  type: "post",
+  user: "",
+  userFile: null,
+  visibility: "Anyone",
+};
 
 const Feed = () => {
   const [filter, setFilter] = useState("recent");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [contents, setContents] = useState([]);
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const fetchContents = async () => {
+      setIsLoading(true);
+      try {
+        const contents = await contentService.getContents();
+        if (contents) {
+          setContents([...contents.documents]);
+        }
+      } catch (error) {
+        console.error("Error fetching contents:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchContents();
   }, []);
 
+  // Mock posts
   const posts = [
     {
       id: 1,
@@ -111,11 +145,12 @@ const Feed = () => {
 
       {/* Posts with improved spacing */}
       <div className="space-y-6">
-        {posts.map((post) => (
-          <div key={post.author.name}>
-            <PostCard post={post} />
-          </div>
-        ))}
+        {contents?.length > 0 &&
+          contents.map((post) => (
+            <div key={post.$id}>
+              <PostCard post={post} />
+            </div>
+          ))}
       </div>
     </div>
   );

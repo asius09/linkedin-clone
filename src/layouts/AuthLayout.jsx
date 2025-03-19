@@ -12,25 +12,7 @@ const AuthLayout = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const checkSession = async () => {
-      setLoading(true);
-      try {
-        const user = await authService.getCurrentUser();
-        if (user) {
-          dispatch(signin({ ...user }));
-          navigate("/home");
-        }
-      } catch (error) {
-        // console.error("Error getting current user:", error.message);
-        dispatch(signout());
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkSession();
-  }, [dispatch, navigate]);
+  
 
   return (
     <div className="app-container w-screen">

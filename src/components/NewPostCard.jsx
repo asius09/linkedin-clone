@@ -18,15 +18,13 @@ const NewPostCard = () => {
   const [charCount, setCharCount] = useState(0);
   const [media, setMedia] = useState([]);
   const [formData, setFormData] = useState({
-    content: "",
-    file: null,
-    visibility: selectedOption,
-    type: "post",
-    userId: "",
-    username: "",
-    status: "",
-    createdAt: new Date(),
+    user: {},
     title: "",
+    content: "",
+    userFile: null,
+    type: "post",
+    visibility: selectedOption,
+    status: false,
   });
   const navigate = useNavigate();
   const onSelect = (option) => setSelectedOption(option);
@@ -53,8 +51,8 @@ const NewPostCard = () => {
     event.preventDefault();
     try {
       const newContent = await contentService.createContent({ ...formData });
-      console.log({ newContent });
       if (newContent) {
+        console.log("new content : ", newContent);
         dispatch(
           setIsPostCreated({
             state: true,
@@ -94,8 +92,7 @@ const NewPostCard = () => {
         setUser(userData);
         setFormData((prevFormData) => ({
           ...prevFormData,
-          userId: userData.$id,
-          username: userData?.name || "No User Found",
+          user: JSON.stringify(userData) || "No User Found",
           status: userData?.status || "",
         }));
       } catch (error) {

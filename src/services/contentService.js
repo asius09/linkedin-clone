@@ -18,11 +18,9 @@ export class ContentService {
     content,
     title,
     type,
-    userId,
-    username,
-    file,
+    user,
+    userFile,
     status,
-    createdAt,
     visibility,
   }) {
     try {
@@ -34,11 +32,9 @@ export class ContentService {
           content,
           title,
           type,
-          userId,
-          username,
-          file,
+          user,
+          userFile,
           status,
-          createdAt,
           visibility,
         }
       );
@@ -57,7 +53,7 @@ export class ContentService {
         contentId,
         {
           content,
-          image,
+          userFile,
           status,
           visibility,
         }

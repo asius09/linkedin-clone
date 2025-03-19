@@ -3,6 +3,8 @@ import React, { useState } from "react";
 const PeopleYouKnow = ({ grid = false }) => {
   const [showAll, setShowAll] = useState(false);
 
+  const cols = grid ? 2 : 1;
+
   const connections = [
     {
       id: 1,
@@ -81,7 +83,9 @@ const PeopleYouKnow = ({ grid = false }) => {
             See all
           </a>
         </div>
-        <div className="w-full grid grid-cols-4 gap-4">
+        <div
+          className={`w-full grid grid-cols-${cols} gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5`}
+        >
           {displayConnections.map((connection) => (
             <div
               key={connection.id}

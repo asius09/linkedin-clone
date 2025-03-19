@@ -74,9 +74,8 @@ const Notifications = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[250px_1fr_350px] gap-5">
-        <aside className="">
+      <div className="grid grid-cols-1  md:px-4 lg:px-0 md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr_350px] gap-5">
+        <aside className="hidden md:block">
           <SideProfile />
         </aside>
         <main className="">
@@ -146,7 +145,7 @@ const Notifications = () => {
             </div>
           </div>
         </main>
-        <aside className="">
+        <aside className="hidden lg:block">
           <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm p-4">
             <h2 className="text-lg font-medium mb-3 text-primary-text dark:text-primary-text-dark">
               Notification Settings
@@ -191,7 +190,6 @@ const Notifications = () => {
           </div>
         </aside>
       </div>
-    </div>
   );
 };
 
