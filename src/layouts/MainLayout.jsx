@@ -7,6 +7,7 @@ import LanguageAndTheme from "../components/LanguageAndTheme";
 import Alert from "../components/Alerts";
 import authService from "../services/authService";
 import { signin, signout } from "../features/authSlice";
+import NavForSmallerDevices from "../components/NavForSmallerDevices";
 
 const MainLayout = () => {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="bg-primary-bg dark:bg-primary-bg-dark min-h-screen flex flex-col">
+    <div className="relative bg-primary-bg dark:bg-primary-bg-dark min-h-screen flex flex-col">
       <header className="flex items-center justify-between">
         {isLogin.state && <Alert type="success">{isLogin.message}</Alert>}
         {isPostCreated.state && (
@@ -55,9 +56,10 @@ const MainLayout = () => {
         <ProfileCard />
         <LanguageAndTheme />
       </header>
-      <main className="container max-w-6xl mx-auto py-5">
+      <main className="container max-w-6xl mx-auto md:pt-5">
         <Outlet />
       </main>
+      <NavForSmallerDevices />
     </div>
   );
 };

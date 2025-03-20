@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import DropDown from "../DropDown";
 
 const ProfileFooter = () => {
+  const dropDownRef = useRef(null);
   const [selectedLanguage, setSelectedLanguage] = useState("Engligh");
   const footerLinks = [
     { text: "About", href: "#" },
@@ -100,11 +101,13 @@ const ProfileFooter = () => {
             </a>
           </p>
         </div>
-        <div className="text-center mb-4">
+        <div className="text-center mb-4 w-56 mx-auto">
           <DropDown
             options={languages}
             onSelect={(selection) => setSelectedLanguage(selection)}
             selectedOption={selectedLanguage}
+            ref={dropDownRef}
+            openOptions="upward"
           />
         </div>
         <p className="text-center">

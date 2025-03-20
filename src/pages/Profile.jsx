@@ -5,8 +5,7 @@ import {
   Skills,
   About,
   UserSidebar,
-  SideProfile,
-  Footer,
+  ProfileFooter,
   Educations,
   Activity,
 } from "../components/profile";
@@ -230,9 +229,9 @@ const Profile = () => {
             isEditMode={isEditMode}
           />
         ))}
-        <Footer />
+        <ProfileFooter />
       </div>
-      <div className="md:col-span-1">
+      <div className="hidden md:block md:col-span-1">
         <UserSidebar />
       </div>
     </div>

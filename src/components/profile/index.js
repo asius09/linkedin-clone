@@ -1,7 +1,6 @@
 import UserProfile from "./sections/UserProfile";
 import UserSidebar from "./UserSidebar";
-import SideProfile from "../SideProfile";
-import Footer from "./ProfileFooter";
+import ProfileFooter from "./ProfileFooter";
 import Skills from "./sections/Skills";
 import Experience from "./sections/Experience";
 import Educations from "./sections/Educations";
@@ -11,8 +10,7 @@ import About from "./sections/About";
 export {
   UserProfile,
   UserSidebar,
-  SideProfile,
-  Footer,
+  ProfileFooter,
   Skills,
   Experience,
   Educations,

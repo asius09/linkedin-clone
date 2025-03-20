@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { openNewPostCard } from "../features/postSlice";
+import { openNewPostCard, setIsPostCreated } from "../features/postSlice";
 import { Link, useNavigate } from "react-router";
 
 const CreateNewPost = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [file, setFile] = useState(null);
+
   const btns = [
     {
       title: "Photo",
@@ -34,18 +38,16 @@ const CreateNewPost = () => {
   ];
 
   const handleBtnClick = (type) => {
-    if (type === "file") {
-      // Logic for opening file input
-      // You may want to implement file selection logic here
-    }
-    dispatch(openNewPostCard());
-    navigate("/home/post/new"); // Navigate to the New Post Card
+    if (type === "file") return;
+    dispatch(openNewPostCard({ file: null }));
+    navigate("/home/post/new");
   };
 
-  const handleMediaUpload = (event) => {
-    // const file = event.target.files[0];
-    dispatch(openNewPostCard());
-    // Handle file upload logic here
+  const handleMediaChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    dispatch(openNewPostCard({ file: URL.createObjectURL(selectedFile) }));
+    navigate("/home/post/new");
   };
 
   const renderBtn = ({ title, icon, iconColor, type, link }) => {
@@ -60,7 +62,7 @@ const CreateNewPost = () => {
           <input
             type="file"
             className="hidden"
-            onChange={(event) => handleMediaUpload(event)}
+            onChange={(event) => handleMediaChange(event)}
           />
         </label>
       );
@@ -87,10 +89,7 @@ const CreateNewPost = () => {
           alt="Profile"
           className="w-12 h-12 rounded-full object-cover"
         />
-        <button
-          onClick={() => handleBtnClick("text")}
-          className="w-full"
-        >
+        <button onClick={() => handleBtnClick("text")} className="w-full">
           <input
             type="text"
             placeholder="What do you want to talk about?"

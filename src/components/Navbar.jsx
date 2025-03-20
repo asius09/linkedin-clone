@@ -54,45 +54,44 @@ const Navbar = () => {
 
   return (
     <nav className="w-full sticky top-0 z-50 bg-secondary-bg dark:bg-secondary-bg-dark border-b border-border dark:border-border-dark">
-      <div className="container mx-auto max-w-6xl flex items-center justify-between">
-        <div className="flex items-center md:w-96 lg:w-auto">
+      <div className="container px-4 md:px-0 mx-auto max-w-6xl flex items-center justify-between">
+        <div className="flex items-center w-full pr-2 md:w-96 md:pr-0">
           <Link to="/home" className="flex items-center">
             <img src="/logo.svg" alt="Logo" className="w-16 h-16" />
           </Link>
-          <Search
-            placeholder="Search"
-            className="hidden md:block md:w-96 lg:w-1/2"
-          />
+          <Search placeholder="Search" />
         </div>
 
-        <div className="flex items-center space-x-8 md:space-x-4 lg:space-x-8">
-          {navItems.map((item, index) => (
-            <NavLinkItem key={index} item={item} />
-          ))}
-
+        <div className="flex items-center space-x-4 lg:space-x-8">
+          <div className="hidden md:flex items-center md:space-x-4 lg:space-x-8">
+            {navItems.map((item, index) => (
+              <NavLinkItem key={index} item={item} />
+            ))}
+          </div>
           <span className="w-px h-6 bg-border dark:bg-border-dark hidden md:block" />
-
-          <div className="relative flex items-center justify-center">
-            <button
-              onClick={handleProfileCardToggle}
-              className="flex flex-col justify-center items-center text-primary-text dark:text-primary-text-dark hover:text-primary focus:outline-none cursor-pointer"
-              aria-expanded={isProfileCardOpen}
-              aria-haspopup="true"
-            >
-              <img
-                src={user.profileImage}
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <div className="flex items-center space-x-1">
-                <span className="text-xs">Me</span>
-                <i
-                  className={`ri-arrow-down-s-line transition-transform duration-200 ${
-                    isProfileCardOpen ? "rotate-180" : ""
-                  }`}
-                ></i>
-              </div>
-            </button>
+          <div className="flex items-center">
+            <div className="relative flex items-center justify-center">
+              <button
+                onClick={handleProfileCardToggle}
+                className="flex flex-col justify-center items-center text-primary-text dark:text-primary-text-dark hover:text-primary focus:outline-none cursor-pointer"
+                aria-expanded={isProfileCardOpen}
+                aria-haspopup="true"
+              >
+                <img
+                  src={user.profileImage}
+                  alt="Profile"
+                  className="w-12 h-12 md:w-8 md:h-8 rounded-full object-cover"
+                />
+                <div className="hidden md:flex items-center space-x-1 ">
+                  <span className="text-xs">Me</span>
+                  <i
+                    className={`ri-arrow-down-s-line transition-transform duration-200 ${
+                      isProfileCardOpen ? "rotate-180" : ""
+                    }`}
+                  ></i>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>

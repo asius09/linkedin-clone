@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
+import Buttons from "../../Buttons";
 
 const UserProfile = () => {
   const [contactInfo, setContactInfo] = useState(true);
   const [portfolio, setPortfolio] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const profileBtns = [
     {
       title: "Open to",
@@ -18,26 +20,44 @@ const UserProfile = () => {
       title: "Resources",
     },
   ];
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm">
+    <div
+      className={`bg-secondary-bg dark:bg-secondary-bg-dark border border-border dark:border-border-dark shadow-sm w-full ${
+        windowWidth <= 768 ? "rounded-none" : "rounded-lg"
+      }`}
+    >
       <div className="relative">
         <div className="h-48 bg-gradient-to-r from-blue-500 to-blue-700 rounded-t-lg"></div>
         <img
           src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Profile"
-          className="w-40 h-40 rounded-full border-4 border-white absolute -bottom-16 left-6 object-cover"
+          className="w-24 h-24 rounded-full border-4 border-white absolute -bottom-12 left-4 md:left-6 object-cover"
         />
-        <button
-          className="w-12 h-12 absolute right-4 top-4 bg-white rounded-full shadow-md hover:bg-gray-100"
-          onClick={() => setIsEditMode(!isEditMode)}
-        >
-          <i className="ri-pencil-line text-gray-700 text-xl"></i>
-        </button>
+        <div className="absolute top-4 right-4 flex gap-2">
+          <button
+            className="w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100"
+            onClick={() => setIsEditMode(!isEditMode)}
+          >
+            <i className="ri-pencil-line text-gray-700 text-xl"></i>
+          </button>
+          <button
+            className="w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <i className="ri-menu-line text-gray-700 text-xl"></i>
+          </button>
+        </div>
       </div>
 
       {/* User Details */}
-      <div className="mt-18 px-6 pb-6">
+      <div className="mt-16 px-6 pb-6 md:px-8 md:pb-8">
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-bold text-primary-text dark:text-primary-text-dark">
@@ -92,19 +112,25 @@ const UserProfile = () => {
         {/* End Contact Info */}
 
         {/* Buttons */}
-        <div className="flex items-center justify-start mt-3">
-          {profileBtns.map((btn, index) => (
-            <button
-              key={index}
-              className={`${
-                btn.title === "Open to"
-                  ? "bg-primary hover:bg-primary/80 text-white"
-                  : "border border-primary text-primary hover:bg-primary/20"
-              } px-4 py-2 rounded-full font-medium mr-2`}
-            >
-              {btn.title}
-            </button>
-          ))}
+        <div className="w-full flex items-center justify-start mt-3 flex-wrap gap-2">
+          {windowWidth > 768 &&
+            profileBtns.map((btn, index) => (
+              <Buttons key={index} title={btn.title} variant="hollow">
+                {btn.title}
+              </Buttons>
+            ))}
+          {windowWidth <= 768 && (
+            <div className="w-full flex items-center justify-start mt-3 flex-wrap gap-2">
+              {profileBtns.slice(0, 2).map((btn, index) => (
+                <Buttons key={index} title={btn.title} variant="hollow">
+                  {btn.title}
+                </Buttons>
+              ))}
+              <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-input-bg dark:hover:bg-input-bg-dark transition-colors duration-200">
+                <i className="ri-more-2-fill text-2xl text-primary-text dark:text-primary-text-dark"></i>
+              </button>
+            </div>
+          )}
         </div>
         {/* End Buttons */}
       </div>

@@ -7,6 +7,7 @@ import Buttons from "./Buttons.jsx";
 import authService from "../services/authService.js";
 import { useNavigate } from "react-router";
 import contentService from "../services/contentService.js";
+import fileService from "../services/fileService.js";
 import { setIsPostCreated } from "../features/postSlice.js";
 
 const NewPostCard = () => {
@@ -31,28 +32,38 @@ const NewPostCard = () => {
   const dropdownRef = useRef(null);
   const [preview, setPreview] = useState(null);
   const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
       setPreview(URL.createObjectURL(selectedFile));
-      if (setUploadState) setUploadState(true);
+      setUploading(true);
     }
   };
 
   const removeFile = () => {
     setFile(null);
     setPreview(null);
-    if (setUploadState) setUploadState(false);
+    setUploading(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      if (uploading) {
+        const addedFile = await fileService.addFile(file);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          userFile: addedFile.id,
+        }));
+        setUploading(false);
+      }
       const newContent = await contentService.createContent({ ...formData });
       if (newContent) {
         console.log("new content : ", newContent);
+
         dispatch(
           setIsPostCreated({
             state: true,
@@ -101,6 +112,24 @@ const NewPostCard = () => {
     };
     getUser();
   }, []);
+
+  useEffect(() => {
+    const handleUpload = async () => {
+      if (file && uploading) {
+        try {
+          const addedFile = await fileService.uploadFile({ ...file });
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            userFile: addedFile.id,
+          }));
+          setUploading(false);
+        } catch (error) {
+          console.error("Error adding file:", error.message);
+        }
+      }
+    };
+    handleUpload();
+  }, [file, uploading]);
 
   if (!isNewPostCardOpen) return null;
 

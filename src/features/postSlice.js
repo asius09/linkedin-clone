@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { toggleTheme } from "./themeSlice";
 const initialState = {
   posts: [],
   loading: false,
@@ -10,6 +9,7 @@ const initialState = {
     message: null,
     type: null,
   },
+  file: null,
 };
 
 const postSlice = createSlice({
@@ -19,11 +19,13 @@ const postSlice = createSlice({
     addPost: (state, action) => {
       state.posts.push(action.payload);
     },
-    openNewPostCard: (state) => {
+    openNewPostCard: (state, action) => {
       state.isNewPostCardOpen = true;
+      state.file = action.payload.file;
     },
     closeNewPostCard: (state) => {
       state.isNewPostCardOpen = false;
+      state.file = null;
     },
     setIsPostCreated: (state, action) => {
       state.isPostCreated = action.payload;
@@ -31,5 +33,6 @@ const postSlice = createSlice({
   },
 });
 
-export const { addPost, openNewPostCard, closeNewPostCard, setIsPostCreated } = postSlice.actions;
+export const { addPost, openNewPostCard, closeNewPostCard, setIsPostCreated } =
+  postSlice.actions;
 export default postSlice;
