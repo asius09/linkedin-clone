@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLoaderData, useLocation } from "react-router";
 import PostCard from "./PostCard";
 import FeedDropDown from "./FeedDropDown";
 import contentService from "../../services/contentService";
@@ -29,6 +30,8 @@ const Feed = () => {
   const [error, setError] = useState(null);
   const [contents, setContents] = useState([]);
 
+  const location = useLocation();
+
   useEffect(() => {
     const fetchContents = async () => {
       setIsLoading(true);
@@ -45,7 +48,7 @@ const Feed = () => {
       }
     };
     fetchContents();
-  }, []);
+  }, [location]);
 
   // Mock posts
   const posts = [

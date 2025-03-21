@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { openNewPostCard, setIsPostCreated } from "../features/postSlice";
+import { openNewPostCard } from "../features/postSlice";
 import { Link, useNavigate } from "react-router";
 
 const CreateNewPost = () => {
@@ -8,6 +8,11 @@ const CreateNewPost = () => {
   const navigate = useNavigate();
 
   const [file, setFile] = useState(null);
+  const [eventState, setEventState] = useState({
+    input: false,
+    file: false,
+    text: false,
+  });
 
   const btns = [
     {
@@ -41,6 +46,11 @@ const CreateNewPost = () => {
     if (type === "file") return;
     dispatch(openNewPostCard({ file: null }));
     navigate("/home/post/new");
+    setEventState((prevState) => ({
+      input: true,
+      file: true,
+      text: true,
+    }));
   };
 
   const handleMediaChange = (event) => {
@@ -60,6 +70,7 @@ const CreateNewPost = () => {
           <i className={`${icon} ${iconColor} mr-2`}></i>
           <span>{title}</span>
           <input
+            disabled={eventState[type]}
             type="file"
             className="hidden"
             onChange={(event) => handleMediaChange(event)}
@@ -71,6 +82,7 @@ const CreateNewPost = () => {
       <Link
         to={link}
         key={title}
+        disabled={eventState[type]}
         className="w-full h-full flex items-center justify-center py-3
         hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors
         cursor-pointer"
@@ -89,8 +101,13 @@ const CreateNewPost = () => {
           alt="Profile"
           className="w-12 h-12 rounded-full object-cover"
         />
-        <button onClick={() => handleBtnClick("text")} className="w-full">
+        <button
+          onClick={() => handleBtnClick("text")}
+          disabled={eventState.input}
+          className="w-full"
+        >
           <input
+            disabled={eventState.input}
             type="text"
             placeholder="What do you want to talk about?"
             className="w-full border border-border dark:border-border-dark rounded-full py-3 px-4 bg-input-bg dark:bg-input-bg-dark resize-none focus:outline-none focus:ring-1 focus:ring-input-outline dark:focus:ring-input-outline-dark"

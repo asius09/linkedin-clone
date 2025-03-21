@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const PeopleYouKnow = ({ grid = false }) => {
+const PeopleYouKnow = ({ grid = false, suggestions = 8 }) => {
   const [showAll, setShowAll] = useState(false);
 
   const cols = grid ? 2 : 1;
@@ -71,7 +71,9 @@ const PeopleYouKnow = ({ grid = false }) => {
     },
   ];
 
-  const displayConnections = showAll ? connections : connections.slice(0, 8);
+  const displayConnections = showAll
+    ? connections
+    : connections.slice(0, suggestions);
   if (grid) {
     return (
       <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm p-4">

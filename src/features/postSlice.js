@@ -4,7 +4,13 @@ const initialState = {
   loading: false,
   error: null,
   isNewPostCardOpen: false,
-  isPostCreated: {
+  isPostDeleteModalOpen: {
+    state: false,
+    postId: null,
+    fileId: null,
+  },
+  alertMessage: {
+    id: null,
     state: null,
     message: null,
     type: null,
@@ -27,12 +33,23 @@ const postSlice = createSlice({
       state.isNewPostCardOpen = false;
       state.file = null;
     },
-    setIsPostCreated: (state, action) => {
-      state.isPostCreated = action.payload;
+    setAlertMessage: (state, action) => {
+      state.alertMessage = action.payload;
+    },
+    setIsPostDeleteModalOpen: (state, action) => {
+      state.isPostDeleteModalOpen = {
+        ...state.isPostDeleteModalOpen,
+        ...action.payload,
+      };
     },
   },
 });
 
-export const { addPost, openNewPostCard, closeNewPostCard, setIsPostCreated } =
-  postSlice.actions;
+export const {
+  addPost,
+  openNewPostCard,
+  closeNewPostCard,
+  setAlertMessage,
+  setIsPostDeleteModalOpen,
+} = postSlice.actions;
 export default postSlice;

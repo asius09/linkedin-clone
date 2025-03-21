@@ -7,6 +7,7 @@ import {
   PeopleYouKnow,
   Notifications,
   NewsCard,
+  PostDeleteModel,
 } from "../components";
 import { Outlet } from "react-router";
 
@@ -23,12 +24,12 @@ const Home = () => {
           <Feed />
         </main>
         <aside className="hidden lg:block space-y-4">
-          <Notifications />
           <NewsCard />
-          <PeopleYouKnow />
+          <PeopleYouKnow suggestions={3} />
           <SidebarFooter />
         </aside>
       </div>
+      <PostDeleteModel />
     </div>
   );
 };

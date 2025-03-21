@@ -7,6 +7,7 @@ import Notifications from "./Notifications";
 import NewsCard from "./NewsCard";
 import MediaUploader from "./MediaUploader";
 import NewPostCard from "./NewPostCard";
+import PostDeleteModel from "./PostDeleteModel";
 
 export {
   CreateNewPost,
@@ -18,4 +19,5 @@ export {
   NewsCard,
   MediaUploader,
   NewPostCard,
+  PostDeleteModel,
 };

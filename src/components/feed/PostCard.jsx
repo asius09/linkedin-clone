@@ -1,78 +1,108 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import DefaultUserAvatar from "../DefaultUserAvatar";
-import { useSelector } from "react-redux";
-import { current } from "@reduxjs/toolkit";
-
-const formate = {
-  $collectionId: "67d43e81000f42b4c9e2",
-  $createdAt: "2025-03-19T15:05:46.062+00:00",
-  $databaseId: "67d43e3a000740115088",
-  $id: "67dadd49002a98add6c6",
-  $permissions: [
-    "read(user:67d67a0d002ad146962b)",
-    "update(user:67d67a0d002ad146962b)",
-    "delete(user:67d67a0d002ad146962b)",
-  ],
-  $updatedAt: "2025-03-19T15:05:46.062+00:00",
-  content: "new ",
-  status: true,
-  title: "",
-  type: "post",
-  user: "",
-  userFile: null,
-  visibility: "Anyone",
-};
+import { useSelector, useDispatch } from "react-redux";
+import fileService from "../../services/fileService";
+import { setIsPostDeleteModalOpen } from "../../features/postSlice";
 
 const PostCard = ({ post }) => {
+  const { user: current } = useSelector((state) => state.auth);
+  const { isPostDeleteModalOpen } = useSelector((state) => state.post);
   const { theme } = useSelector((state) => state.theme);
+  const dispatch = useDispatch();
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(Math.floor(Math.random() * 100));
   const [showComments, setShowComments] = useState(false);
   const [shares, setShares] = useState(Math.floor(Math.random() * 100));
   const [postData, setPostData] = useState({});
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [isUserActionsOpen, setIsUserActionsOpen] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
-  useEffect(() => {
-    setPostData({
-      ...post,
-      user: JSON.parse(post.user),
-    });
-  }, [post]);
+  const userActionRef = useRef(null);
 
   const handleLike = () => {
-    if (liked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
-    }
+    liked ? setLikes(likes - 1) : setLikes(likes + 1);
     setLiked(!liked);
+  };
+
+  const handlePostDelete = async () => {
+    if (isPostDeleteModalOpen.state) return;
+    dispatch(
+      setIsPostDeleteModalOpen({
+        state: true,
+        postId: postData.$id,
+        fileId: postData.userFile || null,
+      })
+    );
   };
 
   const handleShowComments = () => {
     setShowComments(!showComments);
   };
 
-  const actionsButtons = [
-    {
-      title: "Like",
-      icon: "ri-thumb-up-line",
-      onClick: handleLike,
-    },
-    {
-      title: "Comment",
-      icon: "ri-chat-1-line",
-      onClick: () => setShowComments(!showComments),
-    },
-    {
-      title: "Share",
-      icon: "ri-share-line",
-      onClick: () => setShares(shares + 1),
-    },
-    {
-      title: "Repost",
-      icon: "ri-repeat-line",
-      onClick: () => {},
-    },
-  ];
+  const actionsButtons = useMemo(
+    () => [
+      {
+        title: "Like",
+        icon: "ri-thumb-up-line",
+        onClick: handleLike,
+      },
+      {
+        title: "Comment",
+        icon: "ri-chat-1-line",
+        onClick: () => setShowComments(!showComments),
+      },
+      {
+        title: "Share",
+        icon: "ri-share-line",
+        onClick: () => setShares(shares + 1),
+      },
+      {
+        title: "Repost",
+        icon: "ri-repeat-line",
+        onClick: () => {},
+      },
+    ],
+    [handleLike, setShowComments, setShares, handlePostDelete]
+  );
+
+  const userActions = useMemo(
+    () =>
+      isCurrentUser
+        ? [
+            {
+              title: "Edit",
+              icon: "ri-edit-line",
+              onClick: () => {},
+            },
+            {
+              title: "Delete",
+              icon: "ri-delete-bin-line",
+              onClick: () => {
+                handlePostDelete();
+                setIsUserActionsOpen(false);
+              },
+            },
+          ]
+        : [
+            {
+              title: "Save",
+              icon: "ri-bookmark-line",
+              onClick: () => {},
+            },
+            {
+              title: "Report",
+              icon: "ri-flag-line",
+              onClick: () => {},
+            },
+          ],
+    [isCurrentUser, handlePostDelete]
+  );
+
+  const handleUserActions = () => {
+    setIsUserActionsOpen(!isUserActionsOpen);
+  };
 
   const fomateCreatedAt = (createdAt) => {
     const currDate = new Date();
@@ -86,38 +116,111 @@ const PostCard = ({ post }) => {
     }
   };
 
+  const getPreview = async () => {
+    if (!postData.userFile) return;
+    setLoadingPreview(true);
+    try {
+      const preview = await fileService.getFilePreview({
+        fileId: postData.userFile,
+      });
+      setPreview(preview);
+    } catch (error) {
+      console.error("Error getting preview:", error.message);
+    } finally {
+      setLoadingPreview(false);
+    }
+  };
+
+  useEffect(() => {
+    setPostData({
+      ...post,
+      user: JSON.parse(post.user),
+    });
+  }, [post]);
+
+  useEffect(() => {
+    const currUser = postData.user;
+    setIsCurrentUser(currUser?.$id === current?.$id);
+    getPreview();
+  }, [postData]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        userActionRef.current &&
+        !userActionRef.current.contains(event.target)
+      ) {
+        setIsUserActionsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
   return (
     <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm mt-4 px-4 pt-4 overflow-hidden">
       {/* Post header */}
-      <div className="flex items-center justify-start">
-        <DefaultUserAvatar
-          height="h-10"
-          width="w-10"
-          variant={theme}
-          className="mr-3"
-        />
-        
-        {/* User Data */}
-        <div className="flex flex-col">
-          <h3 className="text-lg font-semibold text-primary-text dark:text-primary-text-dark">
-            {postData.user?.name}
-          </h3>
-          <p className="text-xs text-secondary-text dark:text-secondary-text-dark">
-            {fomateCreatedAt(postData.$createdAt)}
-          </p>
+      <div className="relative w-full flex items-start justify-between">
+        <div className="flex items-center justify-start">
+          {/* User Avatar */}
+          <DefaultUserAvatar
+            height="h-10"
+            width="w-10"
+            variant={theme}
+            className="mr-3"
+          />
+          {/* User Data */}
+          <div className="flex flex-col">
+            <h3 className="text-lg font-semibold text-primary-text dark:text-primary-text-dark">
+              {postData.user?.name}
+            </h3>
+            <p className="text-xs text-secondary-text dark:text-secondary-text-dark">
+              {fomateCreatedAt(postData.$createdAt)}
+            </p>
+          </div>
         </div>
+        {/* User Actions */}
+        <button
+          onClick={handleUserActions}
+          className="w-10 h-10 rounded-full hover:bg-primary-bg dark:hover:bg-primary-bg-dark transition-colors duration-200 flex items-center justify-center cursor-pointer"
+        >
+          <i className="ri-more-2-fill"></i>
+        </button>
+        {isUserActionsOpen && (
+          <div
+            ref={userActionRef}
+            className="absolute top-5 right-5 mt-2 w-56 bg-secondary-bg dark:bg-secondary-bg-dark rounded-md shadow-lg z-10 border border-border dark:border-border-dark"
+          >
+            <ul>
+              {userActions.map((action) => (
+                <li
+                  key={action.title}
+                  className="px-4 py-2 hover:bg-secondary-bg-hover dark:hover:bg-secondary-bg-hover-dark cursor-pointer transition-colors"
+                  onClick={action.onClick}
+                >
+                  <i className={`${action.icon} mr-2`}></i>
+                  {action.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
+      {/* Post header end */}
 
       {/* Post content */}
-      <div className="mt-4">
+      <div className="mt-4 text-md">
         <p className="text-primary-text dark:text-primary-text-dark mb-3">
           {postData.content}
         </p>
-        {postData?.userFile && (
+        {preview && (
           <img
-            src={postData.userFile}
+            src={preview}
             alt="Post"
             className="w-full h-auto object-cover mb-3"
+            loading="lazy"
           />
         )}
       </div>

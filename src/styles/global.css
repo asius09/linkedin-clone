@@ -20,6 +20,8 @@
   --color-input-outline-dark: #1e90ff;
   --color-border-dark: #2c2c2c;
   --color-scarlet-500: #dc2626;
+  --color-secondary-bg-hover: #e6e6e6;
+  --color-secondary-bg-hover-dark: #2c2c2c;
   --font-segoe-ui: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
     sans-serif;
 }

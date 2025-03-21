@@ -12,9 +12,8 @@ import NavForSmallerDevices from "../components/NavForSmallerDevices";
 const MainLayout = () => {
   const dispatch = useDispatch();
   const { theme, isThemeCardOpen } = useSelector((state) => state.theme);
-  const { isNewPostCardOpen, isPostCreated } = useSelector(
-    (state) => state.post
-  );
+  const { isNewPostCardOpen, alertMessage, isPostDeleteModalOpen } =
+    useSelector((state) => state.post);
   const { status, isLogin } = useSelector((state) => state.auth);
   const location = useLocation();
 
@@ -25,8 +24,10 @@ const MainLayout = () => {
 
   useEffect(() => {
     document.body.style.overflow =
-      isThemeCardOpen || isNewPostCardOpen ? "hidden" : "auto";
-  }, [isThemeCardOpen, isNewPostCardOpen]);
+      isThemeCardOpen || isNewPostCardOpen || isPostDeleteModalOpen.state
+        ? "hidden"
+        : "auto";
+  }, [isThemeCardOpen, isNewPostCardOpen, isPostDeleteModalOpen.state]);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -48,10 +49,12 @@ const MainLayout = () => {
   return (
     <div className="relative bg-primary-bg dark:bg-primary-bg-dark min-h-screen flex flex-col">
       <header className="flex items-center justify-between">
-        {isLogin.state && <Alert type="success">{isLogin.message}</Alert>}
-        {isPostCreated.state && (
-          <Alert type={isPostCreated.type}>{isPostCreated.message}</Alert>
+        {alertMessage.state && (
+          <Alert key={alertMessage.id} type={alertMessage.type}>
+            {alertMessage.message}
+          </Alert>
         )}
+        {isLogin.state && <Alert type="success">{isLogin.message}</Alert>}
         <Navbar />
         <ProfileCard />
         <LanguageAndTheme />

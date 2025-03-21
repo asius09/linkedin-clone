@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { closeNewPostCard } from "../features/postSlice.js";
+import { closeNewPostCard, setAlertMessage } from "../features/postSlice.js";
+import DefaultUserAvatar from "./DefaultUserAvatar.jsx";
 import DropDown from "./DropDown.jsx";
 import MediaUploader from "./MediaUploader.jsx";
 import Buttons from "./Buttons.jsx";
@@ -8,16 +9,26 @@ import authService from "../services/authService.js";
 import { useNavigate } from "react-router";
 import contentService from "../services/contentService.js";
 import fileService from "../services/fileService.js";
-import { setIsPostCreated } from "../features/postSlice.js";
 
 const NewPostCard = () => {
-  const [user, setUser] = useState(null);
+  const actionsBtns = [
+    { label: "emoji", icon: "ri-emotion-line" },
+    { label: "event", icon: "ri-calender-line" },
+    { label: "more", icon: "ri-more-fill" },
+  ];
+
   const { isNewPostCardOpen } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-  const [selectedOption, setSelectedOption] = useState("Anyone");
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [chrLimit] = useState(255);
   const [charCount, setCharCount] = useState(0);
   const [media, setMedia] = useState([]);
+
+  const dropdownRef = useRef(null);
+  const onSelect = (option) => setSelectedOption(option);
+  const [selectedOption, setSelectedOption] = useState("Anyone");
+
   const [formData, setFormData] = useState({
     user: {},
     title: "",
@@ -27,45 +38,86 @@ const NewPostCard = () => {
     visibility: selectedOption,
     status: false,
   });
-  const navigate = useNavigate();
-  const onSelect = (option) => setSelectedOption(option);
-  const dropdownRef = useRef(null);
-  const [preview, setPreview] = useState(null);
+
   const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
-      setUploading(true);
+  const handleUpload = async () => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const uploadedFile = await fileService.uploadFile(file);
+      if (uploadedFile) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          userFile: uploadedFile.$id,
+        }));
+        setAlertMessage({
+          id: "fileUploaded",
+          state: true,
+          message: "File uploaded successfully",
+          type: "success",
+        });
+        setPreview(URL.createObjectURL(file));
+      }
+    } catch (error) {
+      setAlertMessage({
+        id: "fileUploadFailed",
+        state: true,
+        message: "Failed to upload file",
+        type: "error",
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
-  const removeFile = () => {
-    setFile(null);
-    setPreview(null);
-    setUploading(false);
+  const handleFileChange = async (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  const removeFile = async () => {
+    try {
+      const isRemove = await fileService.deleteFile({
+        fileId: formData.userFile,
+      });
+      if (isRemove) {
+        setFile(null);
+        setPreview(null);
+        setUploading(false);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          userFile: null,
+        }));
+        setAlertMessage({
+          id: "fileRemoved",
+          state: true,
+          message: "File removed successfully",
+          type: "success",
+        });
+      }
+    } catch (error) {
+      setAlertMessage({
+        id: "fileRemoveFailed",
+        state: true,
+        message: "Failed to remove file",
+        type: "error",
+      });
+    }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      if (uploading) {
-        const addedFile = await fileService.addFile(file);
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          userFile: addedFile.id,
-        }));
-        setUploading(false);
-      }
       const newContent = await contentService.createContent({ ...formData });
       if (newContent) {
-        console.log("new content : ", newContent);
-
         dispatch(
-          setIsPostCreated({
+          setAlertMessage({
+            id: "postCreated",
             state: true,
             message: "Post created successfully",
             type: "success",
@@ -75,9 +127,9 @@ const NewPostCard = () => {
         navigate("/home");
       }
     } catch (error) {
-      console.error("Error creating content:", error.message);
       dispatch(
-        setIsPostCreated({
+        setAlertMessage({
+          id: "postFailed",
           state: false,
           message: "Failed to create post",
           type: "error",
@@ -85,12 +137,6 @@ const NewPostCard = () => {
       );
     }
   };
-
-  const actionsBtns = [
-    { label: "emoji", icon: "ri-emotion-line" },
-    { label: "event", icon: "ri-calender-line" },
-    { label: "more", icon: "ri-more-fill" },
-  ];
 
   useEffect(() => {
     setCharCount(formData.content.length);
@@ -114,22 +160,10 @@ const NewPostCard = () => {
   }, []);
 
   useEffect(() => {
-    const handleUpload = async () => {
-      if (file && uploading) {
-        try {
-          const addedFile = await fileService.uploadFile({ ...file });
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            userFile: addedFile.id,
-          }));
-          setUploading(false);
-        } catch (error) {
-          console.error("Error adding file:", error.message);
-        }
-      }
-    };
-    handleUpload();
-  }, [file, uploading]);
+    if (file) {
+      handleUpload();
+    }
+  }, [file]);
 
   if (!isNewPostCardOpen) return null;
 
@@ -137,12 +171,13 @@ const NewPostCard = () => {
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
       <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg shadow-xl w-full max-w-2xl p-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-start">
-            <img
+          <div className="flex items-center gap-3">
+            <DefaultUserAvatar width={"w-12"} height={"h-12"} />
+            {/* <img
               src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3"
               alt="User"
-              className="w-12 h-12 rounded-full mr-3 object-cover"
-            />
+              className="w-12 h-12 rounded-full object-cover"
+            /> */}
             <div>
               <h3 className="font-bold text-primary-text dark:text-primary-text-dark text-xl">
                 {user?.name || "No User Found"}
@@ -162,6 +197,7 @@ const NewPostCard = () => {
             <i className="ri-close-line text-2xl"></i>
           </button>
         </div>
+
         <form onSubmit={handleSubmit} className="mt-2">
           <textarea
             placeholder="What do you want to talk about?"
@@ -173,17 +209,27 @@ const NewPostCard = () => {
               setFormData({ ...formData, content: e.target.value })
             }
           />
-          <MediaUploader
-            preview={preview}
-            setPreview={setPreview}
-            setFile={setFile}
-            handleFileChange={handleFileChange}
-            removeFile={removeFile}
-            inputClassName="hidden"
-            buttonClassName="flex items-center text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
-            buttonLabel="Add media"
-            icon="ri-image-add-line"
-          />
+          {uploading && (
+            <div className="flex items-center justify-center gap-2 h-52">
+              <i className="ri-loader-2-fill text-2xl animate-spin"></i>
+              <span className="text-primary-text dark:text-primary-text-dark">
+                Uploading...
+              </span>
+            </div>
+          )}
+          {!uploading && (
+            <MediaUploader
+              preview={preview}
+              setPreview={setPreview}
+              setFile={setFile}
+              handleFileChange={handleFileChange}
+              removeFile={removeFile}
+              inputClassName="hidden"
+              buttonClassName="flex items-center text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
+              buttonLabel="Add media"
+              icon="ri-image-add-line"
+            />
+          )}
 
           {media.length > 0 && (
             <div className="mb-6 overflow-x-auto whitespace-nowrap">
