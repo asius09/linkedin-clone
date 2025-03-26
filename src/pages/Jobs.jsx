@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import DropDown from "../components/DropDown";
-import Search from "../components/Search";
+import { DropDown } from "../components/form";
+import { JobFilter, JobSearch } from "../components/JobsPage";
 
 const Jobs = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,112 +40,11 @@ const Jobs = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-5 max-w-7xl mx-auto">
+    <div className="grid grid-cols-1 px-4 md:px-0 lg:grid-cols-[350px_1fr] gap-5 max-w-7xl mx-auto">
       {/* Left Sidebar - Job Search & Filters */}
       <div className="space-y-4">
-        <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm p-4">
-          <h2 className="font-semibold text-xl mb-4 text-primary-text dark:text-primary-text-dark">
-            Search Jobs
-          </h2>
-          <div className="mb-4">
-            <Search
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by title, skill, or company"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <button className="w-full bg-primary hover:bg-primary-hover text-white py-2 px-4 rounded-md text-sm font-medium transition-colors">
-              Search
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-secondary-bg dark:bg-secondary-bg-dark rounded-lg border border-border dark:border-border-dark shadow-sm p-4">
-          <h2 className="font-semibold text-lg mb-3 text-primary-text dark:text-primary-text-dark">
-            Job Filters
-          </h2>
-
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-medium text-primary-text dark:text-primary-text-dark mb-2">
-                Date Posted
-              </h3>
-              <div className="space-y-1">
-                {["Past 24 hours", "Past Week", "Past Month", "Any Time"].map(
-                  (option) => (
-                    <div key={option} className="flex items-center">
-                      <input
-                        type="radio"
-                        id={option}
-                        name="datePosted"
-                        className="mr-2"
-                      />
-                      <label
-                        htmlFor={option}
-                        className="text-sm text-primary-text dark:text-primary-text-dark"
-                      >
-                        {option}
-                      </label>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-medium text-primary-text dark:text-primary-text-dark mb-2">
-                Experience Level
-              </h3>
-              <div className="space-y-1">
-                {[
-                  "Internship",
-                  "Entry level",
-                  "Associate",
-                  "Mid-Senior",
-                  "Director",
-                ].map((option) => (
-                  <div key={option} className="flex items-center">
-                    <input type="checkbox" id={option} className="mr-2" />
-                    <label
-                      htmlFor={option}
-                      className="text-sm text-primary-text dark:text-primary-text-dark"
-                    >
-                      {option}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-medium text-primary-text dark:text-primary-text-dark mb-2">
-                Job Type
-              </h3>
-              <div className="space-y-1">
-                {[
-                  "Full-time",
-                  "Part-time",
-                  "Contract",
-                  "Temporary",
-                  "Volunteer",
-                  "Internship",
-                ].map((option) => (
-                  <div key={option} className="flex items-center">
-                    <input type="checkbox" id={option} className="mr-2" />
-                    <label
-                      htmlFor={option}
-                      className="text-sm text-primary-text dark:text-primary-text-dark"
-                    >
-                      {option}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <JobSearch input={searchTerm} setInput={setSearchTerm} />
+        <JobFilter />
       </div>
 
       {/* Main Content - Job Listings */}

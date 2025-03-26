@@ -1,41 +1,61 @@
-import { useState } from "react";
-import InputField from "../components/InputField";
-import Divider from "../components/Divider";
-import Buttons from "../components/Buttons";
-import RememberMeCheckbox from "../components/RememberMeCheckbox";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { InputField } from "../components/form";
+import {
+  RememberMeCheckbox,
+  JoinNowLink,
+  Buttons,
+  Divider,
+} from "../components/ui";
 import authService from "../services/authService";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router";
-import { signin, setIsLogin } from "../features/authSlice";
-import JoinNowLink from "../components/JoinNowLink";
+import { signin } from "../store/slices/authSlice";
+import { setAlertMessage } from "../store/slices/alertSlice";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+    watch,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+  });
+
   const [isLoginSuccess, setIsLoginSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const { status, isLogin } = useSelector((state) => state.auth);
+  const { status } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const signInRef = useRef(null);
+  const googleSignInRef = useRef(null);
+
+  const onSubmit = async (data) => {
     try {
-      const isLogin = await authService.signin(email, password);
+      const isLogin = await authService.signin(data.email, data.password);
       if (isLogin) {
         setIsLoginSuccess(true);
-        dispatch(setIsLogin({ state: true, message: "Login successful" }));
+        dispatch(
+          setAlertMessage({
+            state: true,
+            message: "Login successful",
+            type: "success",
+            id: "loginSuccess",
+          })
+        );
         const user = await authService.getCurrentUser();
         dispatch(signin(user));
         navigate("/home");
       }
     } catch (error) {
       setError(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -67,35 +87,37 @@ const Login = () => {
         )}
 
         {/* Login Form */}
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <InputField
             label="Email or Phone"
             type="text"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email", { required: true })}
             placeholder="Enter your email or phone"
           />
           <InputField
             label="Password"
             type="password"
             id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password", { required: true })}
             placeholder="Enter your password"
           />
           <RememberMeCheckbox
-            checked={rememberMe}
-            onChange={() => setRememberMe((prev) => !prev)}
+            checked={watch("rememberMe")}
+            onChange={(e) => setValue("rememberMe", e.target.checked)}
           />
           <Buttons
+            className="w-full px-4 py-3 font-semibold"
             variant="filled"
-            className="font-semibold"
             type="submit"
-            disabled={loading}
+            ref={signInRef}
+            disabled={isSubmitting}
           >
-            {loading ? (
-              <i className="ri-loader-2-line animate-spin w-5 h-5"></i>
+            {isSubmitting ? (
+              <span className="flex items-center justify-center space-x-2">
+                <i className="ri-loader-2-line animate-spin w-5 h-5"></i>
+                <span>Signing in...</span>
+              </span>
             ) : (
               "Sign in"
             )}
@@ -106,18 +128,18 @@ const Login = () => {
 
         {/* Google Login Button */}
         <Buttons
+          className="w-full px-4 py-3 flex items-center justify-center"
+          ref={googleSignInRef}
           variant="transparent"
-          disabled={loading}
-          icon={
-            <img
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-              alt="Google logo"
-              className="w-5 h-5 mr-3"
-            />
-          }
+          disabled={isSubmitting}
           onClick={handleGoogleSignIn}
         >
-          Sign in with Google
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google logo"
+            className="w-5 h-5 mr-3"
+          />
+          <span>Sign in with Google</span>
         </Buttons>
         <JoinNowLink
           title="New to LinkedIn?"

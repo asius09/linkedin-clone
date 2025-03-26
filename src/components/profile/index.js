@@ -1,21 +1,12 @@
-import UserProfile from "./sections/UserProfile";
-import UserSidebar from "./UserSidebar";
-import SideProfile from "../SideProfile";
-import Footer from "./ProfileFooter";
-import Skills from "./sections/Skills";
-import Experience from "./sections/Experience";
-import Educations from "./sections/Educations";
-import Activity from "./sections/Activity";
-import About from "./sections/About";
-
+import PeopleYouMayKnow from "./PeopleYouMayKnow";
+import ProfileCard from "./ProfileCard";
+import ProfileMain from "./ProfileMain";
+import ProfileSidebar from "./ProfileSidebar";
+import SidebarProfile from "./SidebarProfile";
 export {
-  UserProfile,
-  UserSidebar,
-  SideProfile,
-  Footer,
-  Skills,
-  Experience,
-  Educations,
-  Activity,
-  About,
+  PeopleYouMayKnow,
+  ProfileCard,
+  ProfileMain,
+  ProfileSidebar,
+  SidebarProfile,
 };

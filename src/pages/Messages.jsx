@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Search from "../components/Search";
+import { Search } from "../components/ui";
 
 const Messages = () => {
   const [conversations, setConversations] = useState([
@@ -36,22 +36,23 @@ const Messages = () => {
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageText, setMessageText] = useState("");
   const [searchMessage, setSearchMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-secondary-bg dark:bg-secondary-bg-dark">
+    <div
+      className={`flex h-[calc(100vh-110px)] bg-secondary-bg dark:bg-secondary-bg-dark px-4 md:px-0`}
+    >
       {/* Sidebar */}
-      <div className="w-80 border-r border-border dark:border-border-dark flex flex-col">
-        <div className="p-4 border-b border-border dark:border-border-dark">
-          <h2 className="text-xl font-semibold text-primary-text dark:text-primary-text-dark">
+      <div className="w-full md:w-80 md:border-r border-border dark:border-border-dark flex flex-col">
+        <div className="py-4 md:p-4 border-b border-border dark:border-border-dark">
+          <h2 className="text-xl font-semibold text-primary-text dark:text-primary-text-dark hidden md:block mb-2">
             Messaging
           </h2>
-          <div className="mt-2 relative">
-            <Search
-              value={searchMessage}
-              onChange={(e) => setSearchMessage(e.target.value)}
-              placeholder="Search messages"
-            />
-          </div>
+          <Search
+            value={searchMessage}
+            onChange={(e) => setSearchMessage(e.target.value)}
+            placeholder="Search messages"
+          />
         </div>
         <div className="overflow-y-auto flex-grow">
           {conversations.map((convo) => (
@@ -62,12 +63,15 @@ const Messages = () => {
                   ? "bg-gray-100 dark:bg-gray-800"
                   : ""
               }`}
-              onClick={() => setSelectedConversation(convo)}
+              onClick={() => {
+                setSelectedConversation(convo);
+                setIsOpen(true);
+              }}
             >
               <img
                 src={convo.avatar}
                 alt={convo.name}
-                className="w-12 h-12 rounded-full mr-3"
+                className="w-12 h-12 rounded-full mr-3 object-cover"
               />
               <div className="flex-grow min-w-0">
                 <div className="flex justify-between items-center">
@@ -98,12 +102,12 @@ const Messages = () => {
 
       {/* Conversation area */}
       {selectedConversation ? (
-        <div className="flex-grow flex flex-col">
+        <div className="hidden flex-grow flex-col md:flex">
           <div className="p-4 border-b border-border dark:border-border-dark flex items-center">
             <img
               src={selectedConversation.avatar}
               alt={selectedConversation.name}
-              className="w-10 h-10 rounded-full mr-3"
+              className="w-10 h-10 rounded-full mr-3 object-cover"
             />
             <div>
               <h3 className="font-semibold text-primary-text dark:text-primary-text-dark">
@@ -132,7 +136,7 @@ const Messages = () => {
                 <img
                   src={selectedConversation.avatar}
                   alt={selectedConversation.name}
-                  className="w-8 h-8 rounded-full mr-2"
+                  className="w-8 h-8 rounded-full mr-2 object-cover"
                 />
                 <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg max-w-xs">
                   <p className="text-primary-text dark:text-primary-text-dark">
@@ -178,7 +182,7 @@ const Messages = () => {
           </div>
         </div>
       ) : (
-        <div className="flex-grow flex items-center justify-center">
+        <div className="hidden flex-grow md:flex items-center justify-center">
           <div className="text-center p-8">
             <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
               <i className="ri-message-3-line text-2xl text-gray-500 dark:text-gray-400"></i>

@@ -1,42 +1,54 @@
-import React, { useEffect, useState } from "react";
-import RememberMeCheckbox from "../components/RememberMeCheckbox";
-import Divider from "../components/Divider";
-import Buttons from "../components/Buttons";
-import InputField from "../components/InputField";
-import authService from "../services/authService";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import {
+  RememberMeCheckbox,
+  Divider,
+  Buttons,
+  JoinNowLink,
+} from "../components/ui";
+import { InputField } from "../components/form";
 import { useDispatch, useSelector } from "react-redux";
-import { signin } from "../features/authSlice";
-import JoinNowLink from "../components/JoinNowLink";
+import { signin } from "../store/slices/authSlice";
+import authService from "../services/authService";
+import { setAlertMessage } from "../store/slices/alertSlice";
 
 const SignUp = () => {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-  const [rememberMe, setRememberMe] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const signUp = async (data) => {
+    if (loading) return;
     const signupData = {
-      email: formData.email,
-      password: formData.password,
-      fullName: `${formData.firstName} ${formData.lastName}`,
+      email: data.email,
+      password: data.password,
+      fullName: `${data.firstName} ${data.lastName}`,
     };
+    console.log(signupData);
     setLoading(true);
     setError(null);
     try {
       const result = await authService.createAccount(signupData);
-      if (result) dispatch(signin(signupData));
+      if (result) {
+        setIsSignUp(true);
+        dispatch(signin(signupData));
+        dispatch(
+          setAlertMessage({
+            id: "signupSuccess",
+            state: true,
+            message: "Account created successfully",
+            type: "success",
+          })
+        );
+      }
     } catch (error) {
       console.error("Error creating account:", error.message);
       setError(error.message);
@@ -46,21 +58,10 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const user = await authService.getCurrentUser();
-        console.log("Current user:", user);
-      } catch (error) {
-        console.error("Error getting current user:", error.message);
-        setError(error.message);
-      }
-    };
-    fetchCurrentUser();
-  }, []);
-
-  const handleGoogleSignUp = () => {
-    console.log("Google sign-up initiated");
-  };
+    if (status) {
+      window.location.href = "/home";
+    }
+  }, [status]);
 
   return (
     <div className="flex min-h-screen bg-primary-bg dark:bg-primary-bg-dark">
@@ -81,18 +82,22 @@ const SignUp = () => {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {error && <p className="text-scarlet-500 mb-4">{error}</p>}
+
+        {isSignUp && (
+          <p className="text-green-500 mb-4">Account created successfully</p>
+        )}
+
+        <form onSubmit={handleSubmit(signUp)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <InputField
                 label="First name"
                 type="text"
                 id="firstName"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
+                {...register("firstName", { required: true })}
                 placeholder="e.g. John"
-                required
+                error={errors.firstName?.message}
               />
             </div>
             <div>
@@ -100,11 +105,9 @@ const SignUp = () => {
                 label="Last name"
                 type="text"
                 id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
+                {...register("lastName", { required: true })}
                 placeholder="e.g. Doe"
-                required
+                error={errors.lastName?.message}
               />
             </div>
           </div>
@@ -113,11 +116,9 @@ const SignUp = () => {
               label="Email"
               type="email"
               id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email", { required: true })}
               placeholder="e.g. youremail@gmail.com"
-              required
+              error={errors.email?.message}
             />
           </div>
           <div>
@@ -125,34 +126,43 @@ const SignUp = () => {
               label="Password"
               type="password"
               id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+              {...register("password", {
+                required: true,
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$/,
+              })}
               placeholder="Create a password"
-              required
+              error={errors.password?.message}
             />
           </div>
-          <RememberMeCheckbox
-            checked={rememberMe}
-            onChange={() => setRememberMe(!rememberMe)}
-          />
-          <Buttons variant="filled" className="font-semibold" type="submit">
-            Agree & Join
+          <RememberMeCheckbox checked={false} onChange={() => {}} />
+          <Buttons
+            variant="filled"
+            className="font-semibold w-full px-4 py-3"
+            type="submit"
+          >
+            {loading ? (
+              <>
+                <i className="ri-loader-line animate-spin"></i>
+                Signing up...
+              </>
+            ) : (
+              "Agree & Join"
+            )}
           </Buttons>
         </form>
         <Divider />
         <Buttons
+          className="w-full px-4 py-3 flex items-center justify-center"
           variant="transparent"
-          icon={
-            <img
-              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-              alt="Google logo"
-              className="w-5 h-5 mr-3"
-            />
-          }
-          onClick={handleGoogleSignUp}
+          onClick={() => {}}
         >
-          Sign up with Google
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google logo"
+            className="w-5 h-5 mr-3"
+          />
+          <span>Sign up with Google</span>
         </Buttons>
         <JoinNowLink
           title="Already have an account?"

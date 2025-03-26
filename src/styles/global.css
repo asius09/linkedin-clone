@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -20,8 +21,24 @@
   --color-input-outline-dark: #1e90ff;
   --color-border-dark: #2c2c2c;
   --color-scarlet-500: #dc2626;
+  --color-secondary-bg-hover: #e6e6e6;
+  --color-secondary-bg-hover-dark: #2c2c2c;
+  --color-primary-hover: rgba(0, 119, 181, 0.2);
   --font-segoe-ui: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
     sans-serif;
+}
+
+.scrollable {
+  overflow-y: scroll; /* Still allow scrolling */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollable::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+button {
+  cursor: pointer;
 }
 
 input:-webkit-autofill,

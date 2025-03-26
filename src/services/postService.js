@@ -11,7 +11,16 @@ export class PostService {
       .setProject(conf.appwriteProjectId);
   }
 
-  async createPost({ content, image, userId, username, userFile, status }) {
+  async createPost({
+    content,
+    title,
+    type,
+    userId,
+    username,
+    userFile,
+    status,
+    createdAt,
+  }) {
     try {
       const post = await this.databases.createDocument(
         conf.appwriteDatabaseId,
@@ -19,11 +28,13 @@ export class PostService {
         ID.unique(),
         {
           content,
-          image,
+          title,
+          type,
           userId,
           username,
           userFile,
           status,
+          createdAt,
         }
       );
       return post;
@@ -66,12 +77,12 @@ export class PostService {
     }
   }
 
-  async getPosts(queries = [Query.equal("status", "active")]) {
+  async getPosts(queries = [Query.equal("status", true)]) {
     try {
       const posts = await this.databases.listDocuments(
         conf.appwriteDatabaseId,
         conf.appwriteCollectionId,
-        queries,
+        queries
       );
       return posts;
     } catch (error) {

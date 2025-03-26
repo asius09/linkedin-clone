@@ -1,4 +1,3 @@
-import Invitation from "../Invitation";
-import PeopleYouKnow from "../PeopleYouKnow";
-import NetworkLeftSidebar from "./NetworkLeftSidebar";
-export { Invitation, PeopleYouKnow, NetworkLeftSidebar };
+import InvitationCard from "../network/InvitationsCard";
+import NetworkPageLeftSidebar from "./NetworkPageLeftSidebar";
+export { InvitationCard, NetworkPageLeftSidebar };

@@ -1,4 +1,4 @@
-import config from "../config";
+import config from "../config/config";
 import { Client, Storage, ID } from "appwrite";
 
 export class FileService {
@@ -11,7 +11,7 @@ export class FileService {
     this.storage = new Storage(this.client);
   }
 
-  async uploadFile({ file }) {
+  async uploadFile(file) {
     try {
       const uploadedFile = await this.storage.createFile(
         config.appwriteBucketId,
@@ -32,7 +32,6 @@ export class FileService {
     } catch (error) {
       console.error("Error deleting file:", error.message);
       throw new Error("Failed to delete file. Please try again.");
-      return false;
     }
   }
 
