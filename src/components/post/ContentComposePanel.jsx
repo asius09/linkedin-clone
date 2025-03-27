@@ -1,25 +1,27 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { openNewPostCard } from "../../store/slices/contentSlice";
+import { toggleFeatureFlags } from "../../store/slices/featureFlagsSlice";
 import { Link, useNavigate } from "react-router";
-import UserAvatar from "../common/UserAvatar";
+import { UserAvatar } from "../common";
 import ROUTES from "../../routes/routes";
 
-const CreateNewPost = () => {
+const ContentComposePanel = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isNewPostCardOpen } = useSelector((state) => state.content);
   const { user: currentUser } = useSelector((state) => state.auth);
-
+  const { postComposer } = useSelector(
+    (state) => state.featureFlags.featureFlags
+  );
   const [file, setFile] = useState(null);
+
   const [eventState, setEventState] = useState({
     input: false,
     file: false,
     text: false,
   });
 
-  const btns = [
+  const composerBtns = [
     {
       title: "Photo",
       icon: "ri-image-line",
@@ -49,7 +51,7 @@ const CreateNewPost = () => {
 
   const handleBtnClick = (type) => {
     if (type === "file") return;
-    dispatch(openNewPostCard({ file: null }));
+    dispatch(toggleFeatureFlags({ flag: "postComposer" }));
     navigate("/home/post/new");
     setEventState({
       input: true,
@@ -61,19 +63,19 @@ const CreateNewPost = () => {
   const handleMediaChange = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
-    dispatch(openNewPostCard({ file: URL.createObjectURL(selectedFile) }));
+    dispatch(toggleFeatureFlags("postComposer"));
     navigate("/home/post/new");
   };
 
   useEffect(() => {
-    !isNewPostCardOpen
+    !postComposer
       ? setEventState((prevState) => ({
           input: false,
           file: false,
           text: false,
         }))
       : null;
-  }, [isNewPostCardOpen]);
+  }, [postComposer]);
 
   const renderBtn = ({ title, icon, iconColor, type, link }) => {
     if (type === "file") {
@@ -114,24 +116,19 @@ const CreateNewPost = () => {
         <UserAvatar size={48} iconSize={2} imgURL={currentUser?.avatar || ""} />
         <button
           onClick={() => handleBtnClick("text")}
-          disabled={eventState.input}
-          className="w-full"
+          className="w-full text-left border border-border dark:border-border-dark rounded-full py-3 px-4 bg-input-bg dark:bg-input-bg-dark hover:bg-seconday-bg-hover dark:hover:bg-secondary-bg-hover-dark transition-colors cursor-pointer"
         >
-          <input
-            disabled={eventState.input}
-            type="text"
-            placeholder="What do you want to talk about?"
-            className="w-full border border-border dark:border-border-dark rounded-full py-3 px-4 bg-input-bg dark:bg-input-bg-dark resize-none focus:outline-none focus:ring-1 focus:ring-input-outline dark:focus:ring-input-outline-dark"
-            rows="1"
-          />
+          <span className="text-secondary-text dark:text-secondary-text-dark">
+            What do you want to talk about?
+          </span>
         </button>
       </div>
 
       <div className="flex justify-between items-center pt-1 border-t border-border dark:border-border-dark">
-        {btns.map((btn) => renderBtn(btn))}
+        {composerBtns.map((btn) => renderBtn(btn))}
       </div>
     </div>
   );
 };
 
-export default CreateNewPost;
+export default ContentComposePanel;

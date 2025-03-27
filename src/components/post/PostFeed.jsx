@@ -50,11 +50,7 @@ const PostFeed = () => {
       {/* Posts with improved spacing */}
       <div className="space-y-6">
         {contents?.length > 0 &&
-          contents.map((post) => (
-            <div key={post.$id}>
-              <PostCard post={post} />
-            </div>
-          ))}
+          contents.map((post) => <PostCard key={post.$id} post={post} />)}
       </div>
     </div>
   );

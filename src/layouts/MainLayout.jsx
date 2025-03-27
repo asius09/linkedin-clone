@@ -2,7 +2,7 @@ import { Navigate, useLocation, Outlet } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import Navbar from "../components/common/Navbar";
-import ProfileCard from "../components/profile/ProfileCard";
+import { ProfileCard } from "../components/profile";
 import Alert from "../components/common/Alert";
 import LanguageAndTheme from "../components/settings/LanguageAndTheme";
 import NavForSmallerDevices from "../components/common/NavForSmallerDevices";
@@ -18,9 +18,8 @@ import {
 const MainLayout = () => {
   const dispatch = useDispatch();
   const { theme, isThemeCardOpen } = useSelector((state) => state.theme);
-  const { isNewPostCardOpen, isPostDeleteModalOpen } = useSelector(
-    (state) => state.content
-  );
+  const { isPostDeleteModalOpen } = useSelector((state) => state.content);
+  const { featureFlags } = useSelector((state) => state.featureFlags);
   const { alerts } = useSelector((state) => state.alert);
   const { status } = useSelector((state) => state.auth);
   const location = useLocation();
@@ -30,14 +29,15 @@ const MainLayout = () => {
     document.documentElement.classList.add(theme);
   }, [theme]);
 
+  // Handle feature flags and modals
   useEffect(() => {
-    document.body.style.overflow =
-      isThemeCardOpen || isNewPostCardOpen || isPostDeleteModalOpen.state
-        ? "hidden"
-        : "auto";
-  }, [isThemeCardOpen, isNewPostCardOpen, isPostDeleteModalOpen.state]);
+    const activeFeatureFlags = Object.values(featureFlags).some((flag) => flag);
+    const isAnyModalOpen =
+      isThemeCardOpen || isPostDeleteModalOpen || activeFeatureFlags;
+    document.body.style.overflow = isAnyModalOpen ? "hidden" : "auto";
+  }, [isThemeCardOpen, isPostDeleteModalOpen, featureFlags]);
 
-  //Checking Session for the user and setting it...
+  // Checking Session for the user and setting it
   useEffect(() => {
     const checkSession = async () => {
       const user = await authService.getCurrentUser();
@@ -49,12 +49,12 @@ const MainLayout = () => {
     };
 
     checkSession();
-  }, []);
+  }, [dispatch]);
 
-  //to get posts and articles
+  // Get posts and articles
   useEffect(() => {
     const getContent = async () => {
-      setContentLoading(true);
+      dispatch(setContentLoading(true));
       try {
         const contents = await contentService.getContents();
         if (contents) {
@@ -68,13 +68,13 @@ const MainLayout = () => {
           dispatch(addArticles(articles));
         }
       } catch (error) {
-        throw new Error("Failed to load content");
+        console.error("Failed to load content:", error);
       } finally {
-        setContentLoading(false);
+        dispatch(setContentLoading(false));
       }
     };
     getContent();
-  }, []);
+  }, [dispatch]);
 
   if (!status && location.pathname !== "/login") {
     return <Navigate to="/login" />;

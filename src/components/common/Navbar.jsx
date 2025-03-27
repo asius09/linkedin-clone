@@ -1,13 +1,18 @@
 import React from "react";
 import { Link, NavLink } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { setIsProfileCardOpen } from "../../store/slices/navigationSlice";
-import Search from "../ui/Search";
-import UserAvatar from "../common/UserAvatar";
+import {
+  toggleFeatureFlags,
+  closeFeatureFlags,
+} from "../../store/slices/featureFlagsSlice";
+import { Search } from "../ui/";
+import { UserAvatar } from "../common";
 import ROUTES from "../../routes/routes";
 
 const Navbar = () => {
-  const { isProfileCardOpen } = useSelector((state) => state.navigation);
+  const { isProfileCardOpen } = useSelector(
+    (state) => state.featureFlags.featureFlags
+  );
   const { user: currentUser } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -25,7 +30,9 @@ const Navbar = () => {
   ];
 
   const handleProfileCardToggle = () => {
-    dispatch(setIsProfileCardOpen(!isProfileCardOpen));
+    isProfileCardOpen
+      ? dispatch(closeFeatureFlags({ flag: "isProfileCardOpen" }))
+      : dispatch(toggleFeatureFlags({ flag: "isProfileCardOpen" }));
   };
 
   const NavLinkItem = ({ item }) => (

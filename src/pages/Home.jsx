@@ -1,15 +1,10 @@
 import React from "react";
 import { Outlet } from "react-router";
-import { CreateNewPost } from "../components/post";
+import { ContentComposePanel } from "../components/post";
 import { SidebarFooter } from "../components/ui";
 import { PostFeed } from "../components/post";
-import {
-  SidebarProfile,
-  PeopleYouMayKnow,
-} from "../components/profile";
-import {
-  PostDeleteModel
-} from "../components/post"
+import { SidebarProfile, PeopleYouMayKnow } from "../components/profile";
+import { PostDeleteModel } from "../components/post";
 import { TrendingArticleCard } from "../components/articles";
 
 const Home = () => {
@@ -21,7 +16,7 @@ const Home = () => {
           <SidebarProfile />
         </aside>
         <main className="pb-8">
-          <CreateNewPost />
+          <ContentComposePanel />
           <PostFeed />
         </main>
         <aside className="hidden lg:block space-y-4">

@@ -1,7 +1,14 @@
-import CreateNewPost from "./CreateNewPost";
-import NewPostCard from "./NewPostCard";
+import ContentComposePanel from "./ContentComposePanel";
+import PostComposer from "./PostComposer";
 import PostCard from "./PostCard";
 import PostDeleteModel from "./PostDeleteModel";
 import PostFeed from "./PostFeed";
 import PostFeedFilter from "./PostFeedFilter";
-export {CreateNewPost, NewPostCard, PostCard, PostDeleteModel, PostFeed, PostFeedFilter}
+export {
+  ContentComposePanel,
+  PostComposer,
+  PostCard,
+  PostDeleteModel,
+  PostFeed,
+  PostFeedFilter,
+};

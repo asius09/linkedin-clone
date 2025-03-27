@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleTheme, toggleThemeCard } from "../../store/slices/themeSlice";
+import { toggleTheme } from "../../store/slices/themeSlice";
+import { closeAllFeatureFlags } from "../../store/slices/featureFlagsSlice";
 import DropDown from "../form/DropDown";
 
 const LanguageAndTheme = () => {
   const dispatch = useDispatch();
   const [selectedLanguage, setSelectedLanguage] = useState("");
-  const { theme, isThemeCardOpen } = useSelector((state) => state.theme);
+  const { theme } = useSelector((state) => state.theme);
+  const { isLanguageAndThemeSettingsOpen } = useSelector(
+    (state) => state.featureFlags.featureFlags
+  );
 
   const languages = [
     { code: "en", name: "English" },
@@ -30,10 +34,10 @@ const LanguageAndTheme = () => {
   };
 
   const handleClose = () => {
-    dispatch(toggleThemeCard());
+    dispatch(closeAllFeatureFlags());
   };
 
-  if (!isThemeCardOpen) return null;
+  if (!isLanguageAndThemeSettingsOpen) return null;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-black/50 absolute inset-0 z-[999]">

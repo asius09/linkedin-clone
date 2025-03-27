@@ -75,7 +75,7 @@ const Notifications = () => {
 
   return (
     <div className="grid grid-cols-1  md:px-4 lg:px-0 md:grid-cols-[250px_1fr] lg:grid-cols-[250px_1fr_350px] gap-5">
-      <aside className="hidden md:block">
+      <aside className="hidden md:block text-primary-text dark:text-primary-text-dark">
         <SidebarProfile />
       </aside>
       <main className="">

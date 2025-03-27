@@ -3,23 +3,21 @@ import { createSlice } from "@reduxjs/toolkit";
 // Load initial state from localStorage if available
 const loadState = () => {
   try {
-    const serializedState = localStorage.getItem("postState");
-    if (serializedState === null) {
+    const contentState = localStorage.getItem("contentState");
+    if (contentState === null) {
       return {
         posts: [],
         articles: [],
         contentLoading: false,
         error: null,
-        isNewPostCardOpen: false,
-        isPostDeleteModalOpen: {
-          state: false,
-          postId: null,
+        deleteContent: {
+          type: null,
+          contentId: null,
           fileId: null,
         },
-        file: null,
       };
     }
-    return JSON.parse(serializedState);
+    return JSON.parse(contentState);
   } catch (err) {
     console.error("Failed to load state from localStorage:", err);
     return {
@@ -27,13 +25,11 @@ const loadState = () => {
       articles: [],
       contentLoading: false,
       error: null,
-      isNewPostCardOpen: false,
-      isPostDeleteModalOpen: {
-        state: false,
+      deleteContent: {
+        type: null,
         postId: null,
         fileId: null,
       },
-      file: null,
     };
   }
 };
@@ -43,8 +39,8 @@ const initialState = loadState();
 // Save state to localStorage
 const saveState = (state) => {
   try {
-    const serializedState = JSON.stringify(state);
-    localStorage.setItem("postState", serializedState);
+    const contentState = JSON.stringify(state);
+    localStorage.setItem("contentState", contentState);
   } catch (err) {
     console.error("Failed to save state to localStorage:", err);
   }
@@ -70,19 +66,10 @@ const contentSlice = createSlice({
       state.contentLoading = action.payload;
       saveState(state);
     },
-    openNewPostCard: (state, action) => {
-      state.isNewPostCardOpen = true;
-      state.file = action.payload.file;
-      saveState(state);
-    },
-    closeNewPostCard: (state) => {
-      state.isNewPostCardOpen = false;
-      state.file = null;
-      saveState(state);
-    },
-    setIsPostDeleteModalOpen: (state, action) => {
-      state.isPostDeleteModalOpen = {
-        ...state.isPostDeleteModalOpen,
+
+    setDeleteContent: (state, action) => {
+      state.deleteContent = {
+        ...state.deleteContent,
         ...action.payload,
       };
       saveState(state);
@@ -90,12 +77,6 @@ const contentSlice = createSlice({
   },
 });
 
-export const {
-  addPosts,
-  addArticles,
-  openNewPostCard,
-  closeNewPostCard,
-  setIsPostDeleteModalOpen,
-  setContentLoading,
-} = contentSlice.actions;
+export const { addPosts, addArticles, setContentLoading, setDeleteContent } =
+  contentSlice.actions;
 export default contentSlice;

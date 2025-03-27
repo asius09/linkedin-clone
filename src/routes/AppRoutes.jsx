@@ -17,7 +17,7 @@ import {
   SignUp,
   Landing,
 } from "../pages";
-import { NewPostCard } from "../components/post";
+import { PostComposer } from "../components/post";
 import {
   ArticleReader,
   ArticleFeed,
@@ -32,7 +32,7 @@ const AppRoutes = createBrowserRouter(
       <Route path={ROUTES.SIGNUP} element={<SignUp />} />
       <Route element={<MainLayout />}>
         <Route path={ROUTES.HOME} element={<Home />}>
-          <Route path={ROUTES.NEWPOST} element={<NewPostCard />} />
+          <Route path={ROUTES.NEWPOST} element={<PostComposer />} />
         </Route>
         <Route path={ROUTES.MYNETWORK} element={<Network />} />
         <Route path={ROUTES.JOBS} element={<Jobs />} />

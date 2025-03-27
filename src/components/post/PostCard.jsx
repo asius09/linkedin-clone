@@ -5,17 +5,21 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import UserAvatar from "../common/UserAvatar";
 import { useSelector, useDispatch } from "react-redux";
 import fileService from "../../services/fileService";
-import { setIsPostDeleteModalOpen } from "../../store/slices/contentSlice";
+import { setDeleteContent } from "../../store/slices/contentSlice";
+import UserAvatar from "../common/UserAvatar";
 import VideoPlayer from "../mediaHandlers/VideoPlayer";
 import formateDate from "../../utils/formateDate";
+import { ReactionBtn } from "../ui";
+import { toggleFeatureFlags } from "../../store/slices/featureFlagsSlice";
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const { user: currentUser } = useSelector((state) => state.auth);
-  const { isPostDeleteModalOpen } = useSelector((state) => state.content);
+  const { isPostDeleteModalOpen } = useSelector(
+    (state) => state.featureFlags.featureFlags
+  );
 
   const videoRef = useRef(null);
   const userActionRef = useRef(null);
@@ -50,14 +54,15 @@ const PostCard = ({ post }) => {
 
   //if isCurrentUser is author then delete options avail
   const handlePostDelete = useCallback(() => {
-    if (isPostDeleteModalOpen.state) return;
+    if (isPostDeleteModalOpen) return;
     dispatch(
-      setIsPostDeleteModalOpen({
-        state: true,
-        postId: postData.$id,
+      setDeleteContent({
+        type: "post",
+        contentId: postData.$id,
         fileId: postData.userFile || null,
       })
     );
+    dispatch(toggleFeatureFlags({ flag: "isPostDeleteModelOpen" }));
   }, [dispatch, isPostDeleteModalOpen, postData]);
 
   const handleShowComments = () => handleReaction("comments");
@@ -282,16 +287,13 @@ const PostCard = ({ post }) => {
       </div>
 
       {/* Post Actions */}
-      <div className="py-1 border-t border-gray-300 dark:border-gray-600 flex justify-between">
+      <div className="py-3 border-t border-gray-300 dark:border-gray-600 flex justify-between">
         {actionsButtons.map((action) => (
-          <button
+          <ReactionBtn
             key={action.title}
-            className={`flex items-center justify-center p-2 w-full hover:bg-primary-hover rounded-md transition-colors ${action.textColor}`}
-            onClick={action.onClick}
-          >
-            <i className={`${action.icon} mr-2`}></i>
-            <span>{action.title}</span>
-          </button>
+            reaction={action}
+            className={"py-3"}
+          />
         ))}
       </div>
     </div>

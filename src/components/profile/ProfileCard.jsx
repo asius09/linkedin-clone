@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { setIsProfileCardOpen } from "../../store/slices/navigationSlice";
-import { toggleThemeCard } from "../../store/slices/themeSlice";
+import {
+  closeFeatureFlags,
+  toggleFeatureFlags,
+} from "../../store/slices/featureFlagsSlice";
 import { signout } from "../../store/slices/authSlice";
 import authService from "../../services/authService";
 import UserAvatar from "../common/UserAvatar";
@@ -11,16 +13,13 @@ import ROUTES, { getProfileRoute } from "../../routes/routes";
 const ProfileCard = () => {
   const profileCardRef = useRef(null);
   const dispatch = useDispatch();
-  const { isProfileCardOpen } = useSelector((state) => state.navigation);
+  const { isProfileCardOpen } = useSelector(
+    (state) => state.featureFlags.featureFlags
+  );
   const { user: currentUser } = useSelector((state) => state.auth);
 
   const handleClose = () => {
-    dispatch(setIsProfileCardOpen(false));
-  };
-
-  const handleToggleThemeCard = () => {
-    dispatch(toggleThemeCard());
-    handleClose();
+    dispatch(closeFeatureFlags({ flag: "isProfileCardOpen" }));
   };
 
   const profileCardOptions = [
@@ -34,7 +33,12 @@ const ProfileCard = () => {
     },
     {
       title: "Language & Theme",
-      onClick: handleToggleThemeCard,
+      onClick: () => {
+        dispatch(
+          toggleFeatureFlags({ flag: "isLanguageAndThemeSettingsOpen" })
+        );
+        handleClose();
+      },
     },
   ];
 
@@ -51,7 +55,7 @@ const ProfileCard = () => {
         profileCardRef.current &&
         !profileCardRef.current.contains(e.target)
       ) {
-        dispatch(setIsProfileCardOpen(false));
+        handleClose();
       }
     };
 

@@ -36,19 +36,14 @@ The application architecture leverages Appwrite for secure backend operations, e
 
 - **Comprehensive Content Management**  
   Full CRUD operations for articles and posts with version control capabilities
-  
 - **Advanced Rich Text Editor**  
   Powered by Tiptap, offering markdown support and real-time collaboration features
-  
 - **Intelligent Media Processing**  
   Integrated image compression and video transcoding using FFmpeg.wasm
-  
 - **Interactive Engagement System**  
   Real-time reactions including likes, comments, shares, and reposts
-  
 - **Adaptive User Interface**  
   Responsive design with Tailwind CSS, supporting multiple themes and accessibility standards
-  
 - **Scalable Backend Infrastructure**  
   Built on Appwrite for secure, distributed data management and API services
 
@@ -74,7 +69,7 @@ src/
 ├── assets/                  # Static images, icons, etc.
 ├── components/
 │   ├── articles/            # Article-specific components (ArticleCard, ArticleFeed, ArticleReader, ArticleWriter)
-│   ├── posts/               # Post-related components (PostCard, PostFeed, NewPostCard)
+│   ├── posts/               # Post-related components (PostCard, PostFeed, PostComposer)
 │   ├── editor/              # Rich text editor components (TextEditor)
 │   ├── ui/                  # UI components (Buttons, Divider, JoinNowLink, ReactionBtn, RememberMeCheckbox, Search, SidebarFooter)
 │   ├── mediaHandlers/       # Media upload and preview components (ImageDropZone, MediaUploader, VideoPlayer)
@@ -91,7 +86,7 @@ src/
 ├── utils/                   # Utility functions (formatDate, compressImage, compressVideo)
 ├── routes/                  # Routing definitions (AppRoutes, routes.js)
 ├── layouts/                 # Layouts
-|   |-- MainLayout.jsx       # Main Layout which check's for auth 
+|   |-- MainLayout.jsx       # Main Layout which check's for auth
 |   |-- AuthLayout.jsx       # Auth Layout for Signin.jsx and Logout.jsx
 └── main.jsx                 # Application entry point
 ```
@@ -142,11 +137,12 @@ For a live demo and detailed code walkthrough, watch the demo video and check th
 
 ## Contributing
 
-Contributions are welcome!  
-1. Fork the repository.  
-2. Create a new branch (`git checkout -b feature/my-feature`).  
-3. Make your changes and commit them (`git commit -m 'Add my feature'`).  
-4. Push to the branch (`git push origin feature/my-feature`).  
+Contributions are welcome!
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/my-feature`).
+3. Make your changes and commit them (`git commit -m 'Add my feature'`).
+4. Push to the branch (`git push origin feature/my-feature`).
 5. Open a pull request.
 
 Please follow the existing code style and add relevant tests for new features.
@@ -161,10 +157,17 @@ Please follow the existing code style and add relevant tests for new features.
 
 ## Credits
 
-- **Developer:** Asius  
-- **Inspiration:** LinkedIn's interface and professional networking design principles.  
+- **Developer:** Asius
+- **Inspiration:** LinkedIn's interface and professional networking design principles.
 - **Technologies:** React, Tailwind CSS, Appwrite, FFmpeg.wasm, tiptap
 
 ---
 
 Feel free to adjust and expand this README to best fit your project’s details and requirements!
+
+# Feature Flags
+
+1. PostComposer - postComposer
+2. PostDeleteModel - postDeleteModel
+3. LanguageAndTheme - languageAndTheme
+4. ProfileCard - profileCard
