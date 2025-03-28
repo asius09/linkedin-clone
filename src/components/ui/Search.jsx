@@ -4,6 +4,7 @@ const Search = ({ placeholder, value, onChange }) => {
   return (
     <div className="relative flex items-center w-full">
       <input
+        id="search-input"
         value={value}
         onChange={onChange}
         type="text"

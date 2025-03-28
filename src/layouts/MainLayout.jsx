@@ -1,6 +1,6 @@
 import { Navigate, useLocation, Outlet } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import Navbar from "../components/common/Navbar";
 import { ProfileCard } from "../components/profile";
 import Alert from "../components/common/Alert";
@@ -14,6 +14,7 @@ import {
   addArticles,
   setContentLoading,
 } from "../store/slices/contentSlice";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const MainLayout = () => {
   const dispatch = useDispatch();
@@ -94,7 +95,9 @@ const MainLayout = () => {
         <LanguageAndTheme />
       </header>
       <main className="container max-w-6xl mx-auto md:pt-5">
-        <Outlet />
+        <Suspense fallback={<LoadingSpinner />}>
+          <Outlet />
+        </Suspense>
       </main>
       <NavForSmallerDevices />
     </div>

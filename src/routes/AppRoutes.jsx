@@ -3,26 +3,19 @@ import {
   createRoutesFromElements,
   Route,
 } from "react-router";
+import { lazy } from "react";
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import ROUTES from "./routes";
-import {
-  Home,
-  Network,
-  Jobs,
-  Messages,
-  Notifications,
-  ProfilePage,
-  Login,
-  SignUp,
-  Landing,
-} from "../pages";
-import { PostComposer } from "../components/post";
-import {
-  ArticleReader,
-  ArticleFeed,
-  ArticleWriter,
-} from "../components/articles";
+import { Home, Network, Jobs, Login, SignUp, Landing } from "../pages";
+//lazy loadings
+const Messages = lazy(() => import("../pages/Messages"));
+const Notifications = lazy(() => import("../pages/Notifications"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage"));
+const PostComposer = lazy(() => import("../components/post/PostComposer"));
+const ArticleFeed = lazy(() => import("../components/articles/ArticleFeed"));
+const ArticleReader = lazy(() => import("../components/articles/ArticleReader"));
+const ArticleWriter = lazy(() => import("../components/articles/ArticleWriter"));
 
 const AppRoutes = createBrowserRouter(
   createRoutesFromElements(
